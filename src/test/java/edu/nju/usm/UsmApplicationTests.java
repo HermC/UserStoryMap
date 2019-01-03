@@ -12,6 +12,7 @@ public class UsmApplicationTests {
 
     @Test
     public void contextLoads() {
+        System.out.println("Hook test");
         System.out.println("Test success!");
     }
 
