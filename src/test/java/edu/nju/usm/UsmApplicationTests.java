@@ -7,10 +7,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+//@ContextConfiguration(locations = {"classpath*:application.yml"})
 public class UsmApplicationTests {
 
     @Test
     public void contextLoads() {
+        System.out.println("Test success!");
     }
 
 }
