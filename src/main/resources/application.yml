@@ -10,3 +10,13 @@ spring:
     username: root
     password: mf1832225
     driver-class-name: com.mysql.cj.jdbc.Driver
+logging:
+  file: logs/usm.log
+  level:
+    root: info
+    edu.nju.usm.mapper: DEBUG
+
+jwt:
+  expiration: 86400000
+  secret: SHIRO_JWT
+  tokenHead: "Bearer "
