@@ -91,11 +91,11 @@ public class CustomRealm extends AuthorizingRealm {
         }
         User user = userMapper.find(username);
         if (user == null) {
-            throw new AuthenticationException("该用户不存在!");
+            throw new AuthenticationException("用户不存在!");
         }
         int ban = user.getBan();
         if (ban == 1) {
-            throw new AuthenticationException("该用户已被封号!");
+            throw new AuthenticationException("用户已被封号!");
         }
         return new SimpleAuthenticationInfo(token, token, "CustomRealm");
     }

@@ -16,6 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 用户基础信息的查询、更新、修改路由
+ *
+ * @author HermC yzy627@126.com
+ * @date 2018/01/08
+ * @time 22:30
+ * */
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
@@ -25,6 +32,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * 获取用户基础信息，不包括密码
+     *
+     * @return 返回用户基础信息
+     * */
     @RequestMapping(value = "", method = RequestMethod.GET)
     @RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })
     public ResultMap getUserInfo() {
@@ -36,6 +48,12 @@ public class UserController {
                 .message("获取成功!");
     }
 
+    /**
+     * 用户注册方法
+     *
+     * @param userCommand 用户注册需要的信息封装
+     * @return 如果用户已经存在，success返回false；如果注册失败，success返回false；如果注册成功，success返回true
+     * */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResultMap register(@RequestBody final UserCommand userCommand) {
         User user = new User();

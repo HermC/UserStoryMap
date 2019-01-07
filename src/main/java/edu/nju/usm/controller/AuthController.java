@@ -1,9 +1,11 @@
 package edu.nju.usm.controller;
 
 import edu.nju.usm.command.LoginCommand;
+import edu.nju.usm.command.ModifyPasswordCommand;
 import edu.nju.usm.model.ResultMap;
 import edu.nju.usm.service.AuthService;
 import edu.nju.usm.utils.JwtUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +54,39 @@ public class AuthController {
                 .success()
                 .data("token", jwtUtils.createToken(command.getUsername()))
                 .message("认证成功!");
+    }
+
+    /**
+     * 修改用户密码
+     *
+     * */
+    @RequestMapping(value = "/password/modify", method = RequestMethod.POST)
+    public ResultMap modifyPassword(@RequestBody final ModifyPasswordCommand command) {
+        String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        if (!authService.verifyUser(username)) {
+            return new ResultMap()
+                    .code(HttpStatus.OK.value())
+                    .fail()
+                    .message("用户不存在!");
+        }
+        if (!authService.verifyPassword(username, command.getOldPassword())) {
+            return new ResultMap()
+                    .code(HttpStatus.OK.value())
+                    .fail()
+                    .message("密码错误!");
+        }
+        int rows = authService.modifyPassword(username, command.getOldPassword(), command.getNewPassword());
+        if (rows == 0) {
+            return new ResultMap()
+                    .code(HttpStatus.OK.value())
+                    .fail()
+                    .message("修改失败!");
+        } else {
+            return new ResultMap()
+                    .code(HttpStatus.OK.value())
+                    .success()
+                    .message("修改成功!");
+        }
     }
 
 }

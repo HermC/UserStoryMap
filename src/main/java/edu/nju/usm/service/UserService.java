@@ -12,6 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 用户信息处理方法
+ *
+ * @author HermC yzy627@126.com
+ * @date 2018/01/08
+ * @time 22:30
+ * */
 @Service
 public class UserService {
 

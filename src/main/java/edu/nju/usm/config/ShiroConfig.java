@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Shiro权限验证的配置方法，设置Shiro的SecurityManager和Filter
+ *
  * @author HermC yzy627@126.com
  * @version 1.0
  * @date 2019/01/06
@@ -43,8 +45,8 @@ public class ShiroConfig {
         Map<String, String> ruleMap = new HashMap<>();
         // 所有请求通过我们自己的JWT Filter
         ruleMap.put("/**", "jwt");
-        // 访问 /auth/** 权限获取、新增、更新相关路径不通过JwtFilter
-        ruleMap.put("/auth/**", "anon");
+        // 访问 /auth/** 权限获取路径不通过JwtFilter
+        ruleMap.put("/auth/token", "anon");
         // 访问 /user/register 用户注册路径不通过JwtFilter
         ruleMap.put("/user/register", "anon");
         // 访问 /unauthorized/** 不通过JwtFilter
@@ -94,4 +96,5 @@ public class ShiroConfig {
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
+
 }

@@ -7,6 +7,13 @@ import edu.nju.usm.utils.ShiroUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * 权限处理方法
+ *
+ * @author HermC yzy627@126.com
+ * @date 2018/01/08
+ * @time 22:30
+ * */
 @Service
 public class AuthService {
 
