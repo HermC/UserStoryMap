@@ -1,0 +1,44 @@
+= UserStoryMap接口文档
+
+== 1. AuthController
+=== 1.1 获取认证token
+
+.request
+include::{snippets}/auth/http-request.adoc[]
+
+.request-fields
+include::{snippets}/auth/request-fields.adoc[]
+
+.response
+include::{snippets}/auth/http-response.adoc[]
+
+.response-fields
+include::{snippets}/auth/response-fields.adoc[]
+
+
+== 2. UserController
+=== 2.1 获取获取用户信息
+
+.request
+include::{snippets}/getUserInfo/http-request.adoc[]
+
+.response
+include::{snippets}/getUserInfo/http-response.adoc[]
+
+.response-fields
+include::{snippets}/getUserInfo/response-fields.adoc[]
+
+
+=== 2.2 用户注册
+
+.request
+include::{snippets}/register/http-request.adoc[]
+
+.request-fields
+include::{snippets}/register/request-fields.adoc[]
+
+.response
+include::{snippets}/register/http-response.adoc[]
+
+.response-fields
+include::{snippets}/register/response-fields.adoc[]

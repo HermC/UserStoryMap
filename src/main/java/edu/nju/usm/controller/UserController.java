@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/user")
-@RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })
 public class UserController {
 
     @Autowired
@@ -27,13 +26,14 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })
     public ResultMap getUserInfo() {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         return new ResultMap()
                 .code(HttpStatus.OK.value())
                 .success()
                 .data("user", userService.getUser(username))
-                .message("获取成功！");
+                .message("获取成功!");
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -42,9 +42,14 @@ public class UserController {
         user.setUsername(userCommand.getUsername());
         user.setPassword(userCommand.getPassword());
         user.setEmail(userCommand.getEmail());
+        if (userService.isExisted(user.getUsername())) {
+            return new ResultMap().code(HttpStatus.OK.value())
+                    .fail()
+                    .message("该用户名已存在!");
+        }
         int rows = userService.addUser(user);
         if (rows == 0) {
-            return new ResultMap().code(HttpStatus.BAD_REQUEST.value())
+            return new ResultMap().code(HttpStatus.OK.value())
                     .fail()
                     .message("注册失败!");
         } else {

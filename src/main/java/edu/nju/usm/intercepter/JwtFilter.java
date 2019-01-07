@@ -7,6 +7,7 @@ import edu.nju.usm.shiro.JwtToken;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -33,6 +34,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      * */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        System.out.println("---- jwt filter ----");
         // 判断请求头是否带上token
         if (isLoginAttempt(request, response)) {
             //如果存在，则进入 executeLogin 方法执行登入，检查 token 是否正确
@@ -56,7 +58,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
-        String token = req.getHeader("Authorization");
+        String token = req.getHeader(HttpHeaders.AUTHORIZATION);
         return token != null;
     }
 
@@ -66,7 +68,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String token = httpServletRequest.getHeader("Authorization");
+        String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
         JwtToken jwtToken = new JwtToken(token);
         // 提交给realm进行登入，如果错误他会抛出异常并被捕获
         getSubject(request, response).login(jwtToken);
@@ -89,9 +91,13 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        res.setHeader("Access-control-Allow-Origin", req.getHeader("Origin"));
-        res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
-        res.setHeader("Access-Control-Allow-Headers", req.getHeader("Access-Control-Request-Headers"));
+        if (req.getHeader("Origin") != null) {
+            res.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, req.getHeader("Origin"));
+        }
+        if (req.getHeader("Access-Control-Request-Headers") != null) {
+            res.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, req.getHeader("Access-Control-Request-Headers"));
+        }
+        res.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,OPTIONS,PUT,DELETE");
 
         // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
         if (req.getMethod().equals(RequestMethod.OPTIONS.name())) {

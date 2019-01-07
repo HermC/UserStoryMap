@@ -34,6 +34,16 @@ public class UserService {
     }
 
     /**
+     * 根据用户名判断用户是否存在
+     *
+     * @param username 用户名
+     * @return true用户存在，false用户不存在
+     * */
+    public boolean isExisted(String username) {
+        return this.getUser(username) != null;
+    }
+
+    /**
      * 新增用户，用户需要提供用户名、密码和邮箱
      * 建议在使用前检查用户是否存在
      *

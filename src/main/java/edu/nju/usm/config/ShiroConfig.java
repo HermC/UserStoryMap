@@ -26,7 +26,7 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    @Bean
+    @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean factory(SecurityManager securityManager) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 
@@ -57,7 +57,7 @@ public class ShiroConfig {
     /**
      * 注入SecurityManager
      * */
-    @Bean
+    @Bean(name = "securityManager")
     public SecurityManager securityManager(CustomRealm customRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 设置自定义Realm
