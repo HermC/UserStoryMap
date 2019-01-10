@@ -45,7 +45,8 @@ public class ShiroConfig {
         Map<String, String> ruleMap = new HashMap<>();
         // 所有请求通过我们自己的JWT Filter
         ruleMap.put("/**", "jwt");
-        // 访问 /auth/** 权限获取路径不通过JwtFilter
+
+        // 访问 /auth/token 权限获取路径不通过JwtFilter
         ruleMap.put("/auth/token", "anon");
         // 访问 /user/register 用户注册路径不通过JwtFilter
         ruleMap.put("/user/register", "anon");
