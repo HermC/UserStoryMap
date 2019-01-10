@@ -11,10 +11,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户基础信息的查询、更新、修改路由
@@ -25,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * */
 @RestController
 @RequestMapping(value = "/user")
+@CrossOrigin
 public class UserController {
 
     @Autowired

@@ -37,7 +37,7 @@ public class UserServiceTest {
         user.setEmail("user_search_test@test.com");
         assert userService.addUser(user) == 0;  // 由于用户存在导致依然返回0
 
-        user.setUsername("user_search_test_2");
+        user.setUsername("user_search_test_new");
         assert userService.addUser(user) == 1;
         assert user.getId() != -1L;
         assert user.getRoles().size() > 0;
