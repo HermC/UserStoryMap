@@ -139,7 +139,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         try {
             res.getWriter().write(mapper.writeValueAsString(result));
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 

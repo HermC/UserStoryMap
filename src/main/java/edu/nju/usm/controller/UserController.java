@@ -35,7 +35,7 @@ public class UserController {
      *
      * @return 返回用户基础信息
      * */
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @GetMapping(value = "")
     @RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })
     public ResultMap getUserInfo() {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
@@ -52,7 +52,7 @@ public class UserController {
      * @param userCommand 用户注册需要的信息封装
      * @return 如果用户已经存在，success返回false；如果注册失败，success返回false；如果注册成功，success返回true
      * */
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping(value = "/register")
     public ResultMap register(@RequestBody final UserCommand userCommand) {
         User user = new User();
         user.setUsername(userCommand.getUsername());

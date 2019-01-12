@@ -33,7 +33,7 @@ public class AuthController {
      * @param command LoginCommand
      * @return 如果用户和密码验证失败，返回错误；如果用户密码正确，返回认证token
      * */
-    @RequestMapping(value = "/token", method = RequestMethod.POST)
+    @PostMapping(value = "/token")
     public ResultMap auth(@RequestBody final LoginCommand command) {
         if (!authService.verifyUser(command.getUsername())) {
             return new ResultMap()
@@ -58,7 +58,7 @@ public class AuthController {
      * 修改用户密码
      *
      * */
-    @RequestMapping(value = "/password/modify", method = RequestMethod.POST)
+    @PostMapping(value = "/password/modify")
     public ResultMap modifyPassword(@RequestBody final ModifyPasswordCommand command) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         if (!authService.verifyUser(username)) {
