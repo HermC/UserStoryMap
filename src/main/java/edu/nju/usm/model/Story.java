@@ -3,6 +3,7 @@ package edu.nju.usm.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.sql.Time;
 
 /**
@@ -27,7 +28,7 @@ public class Story {
     private long parent_story_id;
     private StoryType story_type;
     private StoryStatus story_status;
-    private Time created_time;
+    private Date created_time;
     private String description;
     private String story_name;
 
@@ -83,11 +84,11 @@ public class Story {
         this.story_status = story_status;
     }
 
-    public Time getCreated_time() {
+    public Date getCreated_time() {
         return created_time;
     }
 
-    public void setCreated_time(Time created_time) {
+    public void setCreated_time(Date created_time) {
         this.created_time = created_time;
     }
 

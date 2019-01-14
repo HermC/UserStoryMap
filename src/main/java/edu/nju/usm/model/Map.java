@@ -23,7 +23,7 @@ public class Map {
     private String map_name;
     private String description;
     private long owner_id;
-    private Time created_time;
+    private Date created_time;
 
     public long getId() {
         return id;
@@ -57,11 +57,11 @@ public class Map {
         this.owner_id = owner_id;
     }
 
-    public Time getCreated_time() {
+    public Date getCreated_time() {
         return created_time;
     }
 
-    public void setCreated_time(Time created_time) {
+    public void setCreated_time(Date created_time) {
         this.created_time = created_time;
     }
 }
