@@ -1,6 +1,6 @@
 server:
   servlet:
-     context-path: /
+    context-path: /
     session:
       timeout: 30m
   port: 8080
@@ -17,6 +17,6 @@ logging:
     edu.nju.usm.mapper: DEBUG
 
 jwt:
-  expiration: 604800
+  expiration: 86400000
   secret: SHIRO_JWT
   tokenHead: "Bearer "

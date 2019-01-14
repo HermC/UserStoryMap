@@ -1,9 +1,6 @@
 package edu.nju.usm.mapper;
 
 import edu.nju.usm.model.Map;
-import edu.nju.usm.model.User;
-import edu.nju.usm.utils.Constants;
-import edu.nju.usm.utils.ShiroUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

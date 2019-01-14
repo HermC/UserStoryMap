@@ -6,11 +6,8 @@ import edu.nju.usm.mapper.UserMapper;
 import edu.nju.usm.model.Map;
 import edu.nju.usm.model.User;
 import edu.nju.usm.model.UserMapRelation;
-import edu.nju.usm.utils.Constants;
-import edu.nju.usm.utils.ShiroUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,7 +56,7 @@ public class MapService {
      * @return 地图
      * */
     public Map getMapByUserIdMapId(long user_id,long map_id) {
-        UserMapRelation userMapRelation = mapMapper.findUserMapRelationByMapId(map_id,user_id);
+        UserMapRelation userMapRelation = mapMapper.findUserMapRelationByUseridAndMapId(map_id,user_id);
 
         if(userMapRelation!=null&&userMapRelation.isPass()){
             Map map=mapMapper.findByMapId(map_id);
@@ -119,7 +116,7 @@ public class MapService {
             mapMapper.delete(map.getId());
         }
         else{
-            mapMapper.deleteUserMapRelation(map.getId(),user.getId());
+            mapMapper.deleteUserMapRelationByUseridAndMapId(map.getId(),user.getId());
         }
     }
 }

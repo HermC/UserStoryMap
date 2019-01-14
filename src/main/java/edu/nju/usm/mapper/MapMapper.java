@@ -27,7 +27,7 @@ public interface MapMapper {
     /**
      * 按username查询可见的所有地图
      * */
-    @Select("SELECT map_id FROM user_map_relation WHERE username = #{username} and pass=true")
+    @Select("SELECT map_id FROM git WHERE username = #{username} and pass=true")
     public List<Long> findByUserName(@Param("username") final String username);
     /**
      * 按map_id查询地图
@@ -38,12 +38,12 @@ public interface MapMapper {
      * 按map_id查询地图对应列表
      * */
     @Select("SELECT * FROM user_map_relation WHERE map_id = #{map_id}")
-    public List<UserMapRelation> findUserMapRelationByMapId(@Param("map_id") final long map_id);
+    public List<UserMapRelation> findUserMapRelationByMapIdd(@Param("map_id") final long map_id);
     /**
      * 按user_id map_id查询地图对应列表
      * */
     @Select("SELECT * FROM user_map_relation WHERE map_id = #{map_id} and user_id=#{user_id}")
-    public UserMapRelation findUserMapRelationByMapId(@Param("map_id") final long map_id,@Param("user_id") final long user_id);
+    public UserMapRelation findUserMapRelationByUseridAndMapId(@Param("map_id") final long map_id, @Param("user_id") final long user_id);
     /**
      * 新增地图
      * */
@@ -74,7 +74,7 @@ public interface MapMapper {
      * 删除地图和用户的对应
      * */
     @Delete("DELETE FROM map WHERE map_id = #{map_id} and user_id=#{user_id}")
-    public int deleteUserMapRelation(@Param("map_id") final long map_id,@Param("user_id") final long user_id);
+    public int deleteUserMapRelationByUseridAndMapId(@Param("map_id") final long map_id, @Param("user_id") final long user_id);
     /**
      * 删除地图和用户的对应
      * */
