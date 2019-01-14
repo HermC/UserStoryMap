@@ -1,7 +1,6 @@
 package edu.nju.usm.intercepter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URLEncoder;
 import edu.nju.usm.model.ResultMap;
 import edu.nju.usm.shiro.JwtToken;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;

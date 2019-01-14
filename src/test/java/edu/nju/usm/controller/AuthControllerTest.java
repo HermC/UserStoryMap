@@ -1,5 +1,8 @@
 package edu.nju.usm.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.nju.usm.command.LoginCommand;
+import edu.nju.usm.command.ModifyPasswordCommand;
 import edu.nju.usm.utils.JwtUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,6 +45,7 @@ public class AuthControllerTest {
     private JwtUtils jwtUtils;
 
     private MockMvc mockMvc;
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Before
     public void setUp() {
@@ -54,10 +58,13 @@ public class AuthControllerTest {
     @Test
     public void authTest() throws Exception {
         // 测试正常登陆
+        LoginCommand command1 = new LoginCommand();
+        command1.setUsername("user_search_test");
+        command1.setPassword("123456");
         this.mockMvc.perform(
                 post("/auth/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\": \"user_search_test\", \"password\": \"123456\"}")
+                        .content(mapper.writeValueAsString(command1))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(true))
@@ -77,20 +84,26 @@ public class AuthControllerTest {
         );
 
         // 测试用户不存在
+        LoginCommand command2 = new LoginCommand();
+        command2.setUsername("user_not_exist");
+        command2.setPassword("12345");
         this.mockMvc.perform(
                 post("/auth/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\": \"user_not_exist\", \"password\": \"12345\"}")
+                        .content(mapper.writeValueAsString(command2))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(false))
         .andExpect(jsonPath("message").value("用户不存在!"));
 
         // 测试密码错误
+        LoginCommand command3 = new LoginCommand();
+        command3.setUsername("user_search_test");
+        command3.setPassword("12345");
         this.mockMvc.perform(
                 post("/auth/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\": \"user_search_test\", \"password\": \"12345\"}")
+                        .content(mapper.writeValueAsString(command3))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(false))
@@ -102,11 +115,14 @@ public class AuthControllerTest {
     public void modifyPasswordTest() throws Exception {
         // 测试正常密码修改
         String token = jwtUtils.createToken("user_search_test");
+        ModifyPasswordCommand command1 = new ModifyPasswordCommand();
+        command1.setOldPassword("123456");
+        command1.setNewPassword("1234567");
         this.mockMvc.perform(
                 post("/auth/password/modify")
                         .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"oldPassword\": \"123456\", \"newPassword\": \"1234567\"}")
+                        .content(mapper.writeValueAsString(command1))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(true))
@@ -131,11 +147,14 @@ public class AuthControllerTest {
     public void modifyPasswordTestAddon() throws Exception {
         // 测试用户不存在
         String token = jwtUtils.createToken("user_not_exist");
+        ModifyPasswordCommand command1 = new ModifyPasswordCommand();
+        command1.setOldPassword("123456");
+        command1.setNewPassword("1234567");
         this.mockMvc.perform(
                 post("/auth/password/modify")
                         .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"oldPassword\": \"123456\", \"newPassword\": \"1234567\"}")
+                        .content(mapper.writeValueAsString(command1))
         )
         .andExpect(status().isUnauthorized())
         .andExpect(jsonPath("code").value(HttpStatus.UNAUTHORIZED.value()))
@@ -143,11 +162,14 @@ public class AuthControllerTest {
 
         // 测试密码错误
         token = jwtUtils.createToken("user_search_test");
+        ModifyPasswordCommand command2 = new ModifyPasswordCommand();
+        command2.setOldPassword("12345");
+        command2.setNewPassword("1234567");
         this.mockMvc.perform(
                 post("/auth/password/modify")
                         .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"oldPassword\": \"12345\", \"newPassword\": \"1234567\"}")
+                        .content(mapper.writeValueAsString(command2))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(false))
@@ -155,11 +177,14 @@ public class AuthControllerTest {
 
         // 测试修改失败
         token = jwtUtils.createToken("user_search_test");
+        ModifyPasswordCommand command3 = new ModifyPasswordCommand();
+        command3.setOldPassword("123456");
+        command3.setNewPassword(null);
         this.mockMvc.perform(
                 post("/auth/password/modify")
                         .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"oldPassword\": \"123456\"}")
+                        .content(mapper.writeValueAsString(command3))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(false))

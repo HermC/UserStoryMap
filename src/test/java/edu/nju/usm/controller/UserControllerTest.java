@@ -1,5 +1,7 @@
 package edu.nju.usm.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.nju.usm.command.UserCommand;
 import edu.nju.usm.utils.JwtUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,10 +45,11 @@ public class UserControllerTest {
     @Autowired
     private WebApplicationContext context;
 
-    private MockMvc mockMvc;
-
     @Autowired
     private JwtUtils jwtUtils;
+
+    private MockMvc mockMvc;
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Before
     public void setUp() {
@@ -93,13 +96,17 @@ public class UserControllerTest {
     @Transactional
     public void registerTest() throws Exception {
         // 测试正常注册
+        UserCommand command1 = new UserCommand();
+        command1.setUsername("user_insert_test");
+        command1.setPassword("123456");
+        command1.setEmail("user_insert_test@test.com");
         this.mockMvc.perform(
                 post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\": \"user_insert_test\", \"password\": \"123456\", \"email\": \"user_insert_test@test.com\"}")
+                        .content(mapper.writeValueAsString(command1))
         )
         .andExpect(status().isOk())
-        .andExpect(jsonPath("data.user.username").value("user_insert_test"))
+        .andExpect(jsonPath("data.user.username").value(command1.getUsername()))
         .andDo(document("register",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -120,20 +127,27 @@ public class UserControllerTest {
         )));
 
         // 测试用户存在
+        UserCommand command2 = new UserCommand();
+        command2.setUsername("user_search_test");
+        command2.setPassword("123456");
+        command2.setEmail("user_insert_test@test.com");
         this.mockMvc.perform(
                 post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\": \"user_search_test\", \"password\": \"123456\", \"email\": \"user_insert_test@test.com\"}")
+                        .content(mapper.writeValueAsString(command2))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(false))
         .andExpect(jsonPath("message").value("该用户名已存在!"));
 
         // 测试没有用户名
+        UserCommand command3 = new UserCommand();
+        command3.setPassword("123456");
+        command3.setEmail("user_insert_test@test.com");
         this.mockMvc.perform(
                 post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"password\": \"123456\", \"email\": \"user_insert_test@test.com\"}")
+                        .content(mapper.writeValueAsString(command3))
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("success").value(false))
