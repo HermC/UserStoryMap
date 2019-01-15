@@ -15,10 +15,10 @@ import java.sql.Time;
 @Data
 @NoArgsConstructor
 public class Story {
-    enum StoryType{
+    public enum StoryType{
         GOAL,STREAM,STORY;
     }
-    enum StoryStatus{
+    public enum StoryStatus{
         TODO,DOING,DONE;
     }
     private long id;
@@ -31,6 +31,10 @@ public class Story {
     private Date created_time;
     private String description;
     private String story_name;
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public long getId() {
         return id;
@@ -106,5 +110,21 @@ public class Story {
 
     public void setStory_name(String story_name) {
         this.story_name = story_name;
+    }
+
+    @Override
+    public String toString() {
+        return "Story{" +
+                "id=" + id +
+                ", map_id=" + map_id +
+                ", release_id=" + release_id +
+                ", created_user_id=" + created_user_id +
+                ", parent_story_id=" + parent_story_id +
+                ", story_type=" + story_type +
+                ", story_status=" + story_status +
+                ", created_time=" + created_time +
+                ", description='" + description + '\'' +
+                ", story_name='" + story_name + '\'' +
+                '}';
     }
 }

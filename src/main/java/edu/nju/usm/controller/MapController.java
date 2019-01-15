@@ -37,24 +37,32 @@ public class MapController {
     /**
      * 获取用户故事地图列表
      *
-     * @param username 用户名
      * @return 返回用户故事地图列表
      * */
-    @GetMapping(value = "/query")
+    @GetMapping(value = "/list")
     @RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })
-    public ResultMap getMapList(@RequestParam("username") String username) {
-        return new ResultMap()
-                .code(HttpStatus.OK.value())
-                .success()
-                .data("map_list", mapService.getMapList(username))
-                .message("获取成功!");
+    public ResultMap getMapList() {
+            String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
+        User user = userService.getUser(username);
+        if (user==null){
+            return new ResultMap().code(HttpStatus.OK.value())
+                    .fail()
+                    .message("用户不存在!");
+        }
+        else {
+            return new ResultMap()
+                    .code(HttpStatus.OK.value())
+                    .success()
+                    .data("map_list", mapService.getMapList(user.getId()))
+                    .message("获取成功!");
+        }
     }
 
     /**
      * 创建用户故事地图
      *
      * @param mapMetaCommand 用户注册需要的信息封装
-     * @return 如果用户已经存在，success返回false；如果注册失败，success返回false；如果注册成功，success返回true
+     * @return 返回创建的用户故事地图
      * */
     @PostMapping(value = "/create")
     @RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })
@@ -80,7 +88,7 @@ public class MapController {
      *
      * @param mapMetaCommand 用户故事地图元数据信息封装
      * @param map_id 用户故事地图id
-     * @return 如果用户已经存在，success返回false；如果注册失败，success返回false；如果注册成功，success返回true
+     * @return 返回修改后的用户故事地图
      * */
     @PostMapping(value = "/modify")
     @RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })
@@ -120,7 +128,6 @@ public class MapController {
      * 删除用户故事地图
      *
      * @param map_id 用户故事地图id
-     * @return
      * */
     @GetMapping(value = "/delete")
     @RequiresRoles(logical = Logical.OR, value = { Constants.ROLE_ADMIN, Constants.ROLE_USER })

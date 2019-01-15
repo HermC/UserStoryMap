@@ -8,6 +8,7 @@ import edu.nju.usm.model.User;
 import edu.nju.usm.model.UserMapRelation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,25 +22,17 @@ import java.util.List;
  * */
 @Service
 public class MapService {
-
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private RoleMapper roleMapper;
     @Autowired
     private MapMapper mapMapper;
 
     /**
-     * 通过用户名查找地图列表
+     * 通过用户id查找地图列表
      *
-     * @param username 用户名
+     * @param user_id 用户id
      * @return 地图列表
      * */
-    public List<Map> getMapList(String username) {
-        if (username == null) {
-            return null;
-        }
-        List<Long> mapIdList=mapMapper.findByUserName(username);
+    public List<Map> getMapList(long user_id) {
+        List<Long> mapIdList=mapMapper.findByUserId(user_id);
         List<Map> mapList=new ArrayList<>();
         for(int i=0;i<mapIdList.size();i++){
             long mapId=mapIdList.get(i);
@@ -75,13 +68,19 @@ public class MapService {
      * @param user 创建者
      * @return 地图列表
      * */
+    @Transactional
     public Map createMap(String name,String description,User user) {
         Map map=new Map();
         map.setMap_name(name);
         map.setDescription(description);
         map.setOwner_id(user.getId());
-        map.setCreated_time((java.sql.Date)new Date());
-        int id=mapMapper.insert(map);
+        map.setCreated_time(new java.sql.Date(new Date().getTime()));
+        int result=mapMapper.insert(map);
+        UserMapRelation userMapRelation=new UserMapRelation();
+        userMapRelation.setUser_id(user.getId());
+        userMapRelation.setMap_id(map.getId());
+        userMapRelation.setPass(true); //TODO
+        int result2=mapMapper.insertUserMapRelation(userMapRelation);
         return map;
     }
 
@@ -99,8 +98,6 @@ public class MapService {
         newmap.setDescription(description);
         newmap.setId(map.getId());
         mapMapper.update(newmap);
-        newmap.setOwner_id(map.getOwner_id());
-        newmap.setCreated_time(map.getCreated_time());
         return newmap;
     }
 
@@ -110,6 +107,7 @@ public class MapService {
      * @param map 地图
      * @param user 删除者
      * */
+    @Transactional
     public void deleteMap(Map map,User user) {
         if(map.getOwner_id()==user.getId()){ // owner
             mapMapper.deleteUserMapRelation(map.getId());

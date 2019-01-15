@@ -1,6 +1,7 @@
 package edu.nju.usm.mapper;
 
 import edu.nju.usm.model.Map;
+import edu.nju.usm.model.UserMapRelation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -42,26 +43,7 @@ public class MapMapperTest {
 
     @Test
     @Transactional
-    public void findByUserNameTest() {
-        List<Long> result1=mapMapper.findByUserName("random");
-        if(result1!=null) {
-            log.info(result1.toString());
-        }
-        assert result1.size() == 0;
-
-        List<Long> real2 = new ArrayList<>();
-        real2.add(1l);
-        real2.add(2l);
-        List<Long> result2 = mapMapper.findByUserName("user_search_test");
-        if(result2!=null) {
-            log.info(result2.toString());
-        }
-        assert real2.equals(result2);
-    }
-
-    @Test
-    @Transactional
-    public void findByMapIdsTest() {
+    public void findByMapIdTest() {
         Map result1=mapMapper.findByMapId(1l);
         if(result1!=null) {
             log.info(result1.toString());
@@ -73,15 +55,58 @@ public class MapMapperTest {
 
     @Test
     @Transactional
+    public void findUserMapRelationByMapIddTest() {
+        List<UserMapRelation> result1=mapMapper.findUserMapRelationByMapId(1l);
+        if(result1!=null) {
+            log.info(result1.toString());
+        }
+        UserMapRelation real1 = new UserMapRelation();
+        real1.setUser_id(2);
+        assert result1.size()==1;
+        assert real1.getUser_id()==result1.get(0).getUser_id();
+    }
+
+    @Test
+    @Transactional
     public void insertTest() {
         Date nowDate=new Date();
         Map map1=new Map();
         map1.setOwner_id(3);
-        map1.setCreated_time((java.sql.Date)nowDate);
+        map1.setCreated_time(new java.sql.Date(nowDate.getTime()));
         map1.setDescription("test insert");
         map1.setMap_name("test insert");
-        int map_id=mapMapper.insert(map1);
-        Map map1_result=mapMapper.findByMapId(map_id);
-        assert map1.getMap_name().equals(map1_result.getMap_name());
+        int result=mapMapper.insert(map1);
+        assert result==1;
+    }
+
+    @Test
+    @Transactional
+    public void insertUserMapRelationTest() {
+        UserMapRelation userMapRelation=new UserMapRelation();
+        userMapRelation.setUser_id(136);
+        userMapRelation.setMap_id(2);
+        int result=mapMapper.insertUserMapRelation(userMapRelation);
+        assert result==1;
+    }
+
+    @Test
+    @Transactional
+    public void deleteTest() {
+        int result=mapMapper.delete(2);
+        assert result==1;
+    }
+
+    @Test
+    @Transactional
+    public void deleteUserMapRelationByUseridAndMapIdTest() {
+        int result=mapMapper.deleteUserMapRelationByUseridAndMapId(2,2);
+        assert result==1;
+    }
+
+    @Test
+    @Transactional
+    public void deleteUserMapRelationTest() {
+        int result=mapMapper.deleteUserMapRelation(2);
+        assert result==1;
     }
 }
