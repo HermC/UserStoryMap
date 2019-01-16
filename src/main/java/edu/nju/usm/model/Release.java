@@ -19,8 +19,8 @@ public class Release {
     private long id;
     private long map_id;
     private String release_name;
-    private Time created_time;
-    private Time deadline;
+    private Date created_time;
+    private Date deadline;
 
     public long getId() {
         return id;
@@ -42,19 +42,19 @@ public class Release {
         this.release_name = release_name;
     }
 
-    public Time getCreated_time() {
+    public Date getCreated_time() {
         return created_time;
     }
 
-    public void setCreated_time(Time created_time) {
+    public void setCreated_time(Date created_time) {
         this.created_time = created_time;
     }
 
-    public Time getDeadline() {
+    public Date getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Time deadline) {
+    public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
 }

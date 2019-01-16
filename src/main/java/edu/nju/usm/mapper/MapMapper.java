@@ -1,6 +1,7 @@
 package edu.nju.usm.mapper;
 
 import edu.nju.usm.model.Map;
+import edu.nju.usm.model.User;
 import edu.nju.usm.model.UserMapRelation;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
@@ -23,7 +24,60 @@ public interface MapMapper {
      * */
     @Select("SELECT map_id FROM user_map_relation WHERE user_id = #{user_id} and pass=true")
     public List<Long> findByUserId(@Param("user_id") final long user_id);
-
+    /**
+     * 按map_id查询地图
+     * */
     @Select("SELECT * FROM map WHERE id = #{map_id}")
     public Map findByMapId(@Param("map_id") final long map_id);
+    /**
+     * 按map_id查询地图对应列表
+     * */
+    @Select("SELECT * FROM user_map_relation WHERE map_id = #{map_id}")
+    public List<UserMapRelation> findUserMapRelationByMapId(@Param("map_id") final long map_id);
+    /**
+     * 按user_id map_id查询地图对应列表
+     * */
+    @Select("SELECT * FROM user_map_relation WHERE map_id = #{map_id} and user_id=#{user_id}")
+    public UserMapRelation findUserMapRelationByUseridAndMapId(@Param("map_id") final long map_id, @Param("user_id") final long user_id);
+    /**
+     * 新增地图
+     * */
+    @Insert({"INSERT INTO map(map_name, description, owner_id) VALUES(#{map_name}, #{description}, #{owner_id})"})
+    @Options(useGeneratedKeys = true)
+    public int insert(Map map);
+    /**
+     * 新增用户地图关系
+     * */
+    @Insert({"INSERT INTO user_map_relation(map_id,user_id,pass) VALUES(#{map_id}, #{user_id},#{pass})"})
+    @Options(useGeneratedKeys = true)
+    public int insertUserMapRelation(UserMapRelation userMapRelation);
+    /**
+     * 更新地图
+     *
+     * 动态sql生成
+     * */
+    @Update("<script>" +
+            "UPDATE map SET " +
+            "<if test='map_name != null'>map_name = #{map_name}, </if>" +
+            "<if test='description != null'>description = #{description} </if>" +
+            "WHERE id = #{id}" +
+            "</script>")
+    public int update(Map map);
+
+    /**
+     * 删除地图
+     * */
+    @Delete("DELETE FROM map WHERE id = #{map_id}")
+    public int delete(@Param("map_id") final long map_id);
+
+    /**
+     * 删除地图和用户的对应
+     * */
+    @Delete("DELETE FROM user_map_relation WHERE map_id = #{map_id} and user_id=#{user_id}")
+    public int deleteUserMapRelationByUseridAndMapId(@Param("map_id") final long map_id, @Param("user_id") final long user_id);
+    /**
+     * 删除地图和用户的对应
+     * */
+    @Delete("DELETE FROM user_map_relation WHERE map_id = #{map_id}")
+    public int deleteUserMapRelation(@Param("map_id") final long map_id);
 }
