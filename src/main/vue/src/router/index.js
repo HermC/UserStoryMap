@@ -3,6 +3,10 @@ import Router from 'vue-router'
 
 import HelloWorld from '../components/HelloWorld'
 import Passport from '../components/Passport'
+import StoryMap from '../components/StoryMap'
+import User from '../components/User'
+
+
 
 Vue.use(Router)
 
@@ -15,6 +19,14 @@ const routes = [
     path: '/',
     name: 'Hello',
     component: HelloWorld
+  }, {
+    path: '/map',
+    name: 'StoryMap',
+    component: StoryMap
+  }, {
+    path: '/user',
+    name: 'User',
+    component: User
   }
 ]
 

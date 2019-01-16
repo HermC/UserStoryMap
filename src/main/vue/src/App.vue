@@ -3,9 +3,9 @@
     <el-header class="header">
       <h4>User Story Map</h4>
     </el-header>
-    <el-main>
+    <div>
       <router-view/>
-    </el-main>
+    </div>
   </div>
 </template>
 
@@ -40,5 +40,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px #ddd solid;
   }
 </style>
