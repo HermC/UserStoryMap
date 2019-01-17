@@ -41,7 +41,7 @@ function get(url, params = null, options = null) {
       return res;
     })
     .catch(err => {
-      console.error(err);
+      // console.error(err);
     });
 }
 
@@ -64,6 +64,7 @@ function post(url, body = {}, options = null) {
 
   return fetch(baseUrl, baseOptions)
     .then(res => {
+      console.log(res);
       return res.json();
     })
     .then(res => {
@@ -71,10 +72,11 @@ function post(url, body = {}, options = null) {
         handleUnauthorized();
       }
       return res;
-    })
-    .catch(err => {
-      console.error(err);
     });
+    // .catch(err => {
+    //   console.error(err);
+    //   return err;
+    // });
 }
 
 function handleUnauthorized() {

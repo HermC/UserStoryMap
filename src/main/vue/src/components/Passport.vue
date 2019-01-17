@@ -42,145 +42,151 @@
   </div>
 </template>
 <script>
-  import {post} from '../tools/http_client';
-  const cookies = require('js-cookie');
+import {post} from '../tools/http_client';
+const cookies = require('js-cookie');
 
-  export default {
-    data() {
-      const validateEmail = (rule, value, callback) => {
-        const reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
-        if (!reg.test(value)) {
-          callback('邮箱格式不正确!');
-        } else {
-          callback();
-        }
-      };
-      const validateConfirm = (rule, value, callback) => {
-        if (this.registerForm.password !== value) {
-          callback('两次输入的密码不同!');
-        } else {
-          callback();
-        }
-      };
-      return {
-        activeTab: 'login',
-
-        loginForm: {
-          username: '',
-          password: '',
-        },
-        registerForm: {
-          username: '',
-          email: '',
-          password: '',
-          confirm: ''
-        },
-
-        loginRules: {
-          username: [
-            { required: true, message: '请输入用户名', trigger: 'blur' },
-            { min: 3, max: 30, message: '长度在3到30个字符', trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: '请输入密码!', trigger: 'blur' },
-            { min: 6, max: 30, message: '长度在6到30个字符', trigger: 'blur' }
-          ]
-        },
-
-        registerRules: {
-          username: [
-            { required: true, message: '请输入用户名', trigger: 'blur' },
-            { min: 6, max: 30, message: '长度在3到30个字符', trigger: 'blur' }
-          ],
-          email: [
-            { required: true, message: '请输入邮箱', trigger: 'blur' },
-            { validator: validateEmail, trigger: 'blur' },
-          ],
-          password: [
-            { required: true, message: '请输入密码!', trigger: 'blur' },
-            { min: 6, max: 30, message: '长度在3到30个字符', trigger: 'blur' }
-          ],
-          confirm: [
-            { required: true, message: '请再次输入密码!', trigger: 'blur' },
-            { validator: validateConfirm, trigger: 'blur' }
-          ]
-        },
-
-        loginMessage: {
-          text: '',
-          show: false
-        },
-        registerMessage: {
-          text: '',
-          show: false
-        }
+export default {
+  data() {
+    const validateEmail = (rule, value, callback) => {
+      const reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
+      if (!reg.test(value)) {
+        callback('邮箱格式不正确!');
+      } else {
+        callback();
       }
-    },
-    methods: {
-      closeLoginMessage: function() {
-        this.loginMessage.show = false;
+    };
+    const validateConfirm = (rule, value, callback) => {
+      if (this.registerForm.password !== value) {
+        callback('两次输入的密码不同!');
+      } else {
+        callback();
+      }
+    };
+    return {
+      activeTab: 'login',
+
+      loginForm: {
+        username: '',
+        password: '',
       },
-      closeRegisterMessage: function() {
-        this.registerMessage.show = false;
+      registerForm: {
+        username: '',
+        email: '',
+        password: '',
+        confirm: ''
       },
-      login: function() {
-        this.$refs['loginForm'].validate((valid) => {
-          if (valid) {
-            let self = this;
-            post('auth/token', this.loginForm)
-              .then(res => {
-                if (!res.success) {
-                  self.loginMessage.text = res.message;
-                  self.loginMessage.show = true;
-                } else {
-                  cookies.set('token', res.data.token);
-                  self.$router.push('/');
-                }
-              });
-          }
-        })
+
+      loginRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 30, message: '长度在3到30个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码!', trigger: 'blur' },
+          { min: 6, max: 30, message: '长度在6到30个字符', trigger: 'blur' }
+        ]
       },
-      register: function() {
-        this.$refs['registerForm'].validate((valid) => {
-          if (valid) {
-            let self = this;
-            post('user/register', this.registerForm)
-              .then(res => {
-                if (!res.success) {
-                  self.registerMessage.text = res.message;
-                  self.registerMessage.show = true;
-                } else {
-                  self.$message({
-                    message: res.message,
-                    type: 'success'
-                  });
-                  self.$router.push('passport');
-                  self.$refs['registerForm'].resetFields();
-                }
-              })
-          }
-        })
+
+      registerRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 6, max: 30, message: '长度在3到30个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { validator: validateEmail, trigger: 'blur' },
+        ],
+        password: [
+          { required: true, message: '请输入密码!', trigger: 'blur' },
+          { min: 6, max: 30, message: '长度在3到30个字符', trigger: 'blur' }
+        ],
+        confirm: [
+          { required: true, message: '请再次输入密码!', trigger: 'blur' },
+          { validator: validateConfirm, trigger: 'blur' }
+        ]
+      },
+
+      loginMessage: {
+        text: '',
+        show: false
+      },
+      registerMessage: {
+        text: '',
+        show: false
       }
     }
+  },
+  methods: {
+    closeLoginMessage: function() {
+      this.loginMessage.show = false;
+    },
+    closeRegisterMessage: function() {
+      this.registerMessage.show = false;
+    },
+    login: function() {
+      this.$refs['loginForm'].validate((valid) => {
+        if (valid) {
+          let self = this;
+          post('auth/token', this.loginForm)
+            .then(res => {
+              if (!res.success) {
+                self.loginMessage.text = res.message;
+                self.loginMessage.show = true;
+              } else {
+                cookies.set('token', res.data.token);
+                self.$router.push('/user');
+              }
+            })
+            .catch(err => {
+              this.$message.error('网络错误!');
+            });
+        }
+      })
+    },
+    register: function() {
+      this.$refs['registerForm'].validate((valid) => {
+        if (valid) {
+          let self = this;
+          post('user/register', this.registerForm)
+            .then(res => {
+              if (!res.success) {
+                self.registerMessage.text = res.message;
+                self.registerMessage.show = true;
+              } else {
+                self.$message({
+                  message: res.message,
+                  type: 'success'
+                });
+                self.$router.push('passport');
+                self.$refs['registerForm'].resetFields();
+              }
+            })
+            .catch(err => {
+              this.$message.error('网络错误!');
+            });
+        }
+      })
+    }
   }
+}
 </script>
 <style scoped lang="less">
-  .container {
-    margin-top: 60px;
+.container {
+  margin-top: 60px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .login-card {
-    width: 25em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-card {
+  width: 25em;
 
-    h4 {
-      margin-top: 0.6em;
-      margin-bottom: 0.6em;
-    }
+  h4 {
+    margin-top: 0.6em;
+    margin-bottom: 0.6em;
   }
-  .login {
-    float: right;
-  }
+}
+.login {
+  float: right;
+}
 </style>

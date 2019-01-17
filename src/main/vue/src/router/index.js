@@ -17,8 +17,8 @@ const routes = [
     component: Passport
   }, {
     path: '/',
-    name: 'Hello',
-    component: HelloWorld
+    name: 'Passport',
+    component: Passport
   }, {
     path: '/map',
     name: 'StoryMap',
@@ -31,4 +31,14 @@ const routes = [
 ]
 
 const router = new Router({routes: routes})
+const cookies = require('js-cookie');
+
+router.beforeEach((to, from, next) => {
+  // if (to.path !== '/passport' && !cookies('token')) {
+    // next('/passport')
+  // } else {
+    next()
+  // }
+})
+
 export default router
