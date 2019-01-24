@@ -10,7 +10,7 @@
               <el-input v-model="loginForm.username"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input type="password" v-model="loginForm.password"></el-input>
+              <el-input type="password" v-model="loginForm.password" ></el-input>
             </el-form-item>
             <el-form-item>
               <el-button class="login" type="primary" @click="login()">登录</el-button>
@@ -117,6 +117,9 @@ export default {
     }
   },
   methods: {
+    handleEnter($event) {
+      console.log($event);
+    },
     closeLoginMessage: function() {
       this.loginMessage.show = false;
     },

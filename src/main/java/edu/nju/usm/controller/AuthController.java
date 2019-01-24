@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @author HermC yzy627@126.com
  * @date 2018/01/05
  * @time 09:44
- * */
+ */
 @RestController
 @RequestMapping(value = "/auth")
 @CrossOrigin
@@ -32,7 +32,7 @@ public class AuthController {
      *
      * @param command LoginCommand
      * @return 如果用户和密码验证失败，返回错误；如果用户密码正确，返回认证token
-     * */
+     */
     @PostMapping(value = "/token")
     public ResultMap auth(@RequestBody final LoginCommand command) {
         if (!authService.verifyUser(command.getUsername())) {
@@ -56,8 +56,7 @@ public class AuthController {
 
     /**
      * 修改用户密码
-     *
-     * */
+     */
     @PostMapping(value = "/password/modify")
     public ResultMap modifyPassword(@RequestBody final ModifyPasswordCommand command) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());

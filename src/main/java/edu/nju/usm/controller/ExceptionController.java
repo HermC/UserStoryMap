@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * @version 1.0
  * @date 2019/01/06
  * @time 22:11
- * */
+ */
 @RestController
 @RequestMapping(value = "/unauthorized")
 @RestControllerAdvice
@@ -27,7 +27,7 @@ public class ExceptionController {
 
     /**
      * unauthorized的路由
-     * */
+     */
     @RequestMapping(value = "/**")
     public ResultMap handleUrl(HttpServletRequest request) {
         return new ResultMap()
@@ -38,7 +38,7 @@ public class ExceptionController {
 
     /**
      * 捕获shiro的异常
-     * */
+     */
     @ExceptionHandler(ShiroException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResultMap handle401(Throwable ex) {
@@ -50,7 +50,7 @@ public class ExceptionController {
 
     /**
      * 捕捉其他所有的异常
-     * */
+     */
     @ExceptionHandler(Exception.class)
     public ResultMap handleOthers(HttpServletRequest req, HttpServletResponse res, Throwable ex) {
         logger.error(ex.getMessage());

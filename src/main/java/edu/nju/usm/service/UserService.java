@@ -18,7 +18,7 @@ import java.util.List;
  * @author HermC yzy627@126.com
  * @date 2018/01/08
  * @time 22:30
- * */
+ */
 @Service
 public class UserService {
 
@@ -32,7 +32,7 @@ public class UserService {
      *
      * @param username 用户名
      * @return 用户信息
-     * */
+     */
     public User getUser(String username) {
         if (username == null) {
             return null;
@@ -45,7 +45,7 @@ public class UserService {
      *
      * @param username 用户名
      * @return true用户存在，false用户不存在
-     * */
+     */
     public boolean isExisted(String username) {
         return this.getUser(username) != null;
     }
@@ -56,7 +56,7 @@ public class UserService {
      *
      * @param user 用户提供信息
      * @return 新增行数。如果添加用户成功，一般会返回1；如果用户存在，以及其他一些错误，会返回0
-     * */
+     */
     @Transactional
     public int addUser(User user) {
         if (user == null) {
@@ -91,7 +91,7 @@ public class UserService {
      *
      * @param user 用户更新信息
      * @return 更新行数。如果更新成功，一般会返回1；如果存在错误，会返回0
-     * */
+     */
     public int modifyUserInfo(User user) {
         if (user == null) {
             return 0;

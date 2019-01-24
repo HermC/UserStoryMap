@@ -10,6 +10,11 @@ spring:
     username: root
     password: mf1832225
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+    hikari:
+      connection-test-query: SELECT 1
+      validation-timeout: 6000
+      max-lifetime: 300000
 logging:
   file: logs/usm.log
   level:

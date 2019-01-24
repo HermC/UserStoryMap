@@ -6,7 +6,7 @@ package edu.nju.usm.utils;
  * @author HermC yzy627@126.com
  * @date 2018/01/05
  * @time 09:44
- * */
+ */
 public class Constants {
 
     public static final int SALT_LENGTH = 20;

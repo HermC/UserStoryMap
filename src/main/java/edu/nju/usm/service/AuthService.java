@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * @author HermC yzy627@126.com
  * @date 2018/01/08
  * @time 22:30
- * */
+ */
 @Service
 public class AuthService {
 
@@ -26,7 +26,7 @@ public class AuthService {
      *
      * @param username 用户名
      * @return true用户存在，false用户不存在
-     * */
+     */
     public boolean verifyUser(String username) {
         return username != null && userMapper.find(username) != null;
     }
@@ -37,7 +37,7 @@ public class AuthService {
      * @param username 用户名
      * @param password 密码
      * @return true密码正确，false密码不正确
-     * */
+     */
     public boolean verifyPassword(String username, String password) {
         if (username == null || username.equals("")) {
             return false;
@@ -53,11 +53,11 @@ public class AuthService {
     /**
      * 修改密码
      *
-     * @param username 用户名
+     * @param username    用户名
      * @param oldPassword 旧密码
      * @param newPassword 新密码
      * @return 更新数据库行数
-     * */
+     */
     public int modifyPassword(String username, String oldPassword, String newPassword) {
         if (username == null || username.equals("")) {
             return 0;

@@ -10,7 +10,7 @@ public class ShiroUtils {
      *
      * @param l 字符串长度
      * @return salt
-     * */
+     */
     public static String generateSalt(int l) {
         int byteLen = l >> 1;
         SecureRandomNumberGenerator generator = new SecureRandomNumberGenerator();
@@ -18,13 +18,13 @@ public class ShiroUtils {
     }
 
     /**
-     *获取加密后的密码，使用默认hash迭代的次数 1 次
+     * 获取加密后的密码，使用默认hash迭代的次数 1 次
      *
      * @param hashAlgorithm hash算法名称 MD2、MD5、SHA-1、SHA-256、SHA-384、SHA-512、etc。
      * @param password      需要加密的密码
      * @param salt          盐
      * @return 加密后的密码
-     * */
+     */
     public static String encryptPassword(String hashAlgorithm, String password, String salt) {
         return encryptPassword(hashAlgorithm, password, salt, 1);
     }

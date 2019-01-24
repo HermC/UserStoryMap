@@ -8,20 +8,21 @@
           <el-menu-item index="3">账号管理</el-menu-item>
         </el-menu>
 
-        <div class="menu-content menu-content-maps" v-if="activeIndex == '1'">
-          <div class="map" v-for="i in [1,2,3,4,5,6,7]">
-            <div class="name">我的故事地图</div>
-            <div class="desc">我的故事地图的描述</div>
-            <i class="el-icon-edit" @click="dialogVisible = true"></i>
+        <div class="menu-content menu-content-maps" v-if="activeIndex === '1'">
+          <div class="map" v-for="(map, index) of maps">
+            <div class="name" @click="showMap(index)">{{ map.map_name }}</div>
+            <div class="desc">{{ map.description }}</div>
+            <i class="el-icon-edit" @click="showEditDialog(index)"></i>
+            <i class="el-icon-delete" @click="handleDelete(index)"></i>
           </div>
           <div class="map-create" @click="addDialogVisible = true">
             <span>+</span>
           </div>
         </div>
-        <div class="menu-content" v-else-if="activeIndex == '2'">
+        <div class="menu-content" v-else-if="activeIndex === '2'">
 
         </div>
-        <div class="menu-content" v-else-if="activeIndex == '3'">
+        <div class="menu-content" v-else-if="activeIndex === '3'">
           <el-row>
             <el-col :sm="24" :md="12">
               <h4>修改密码</h4>
@@ -44,6 +45,7 @@
         </div>
       </div>
       <el-dialog
+              v-if="selectedMap !== null"
               title="修改故事地图"
               :visible.sync="dialogVisible"
               width="50%">
@@ -52,7 +54,7 @@
             <el-input v-model="mapEdit.name" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="地图描述">
-            <el-input v-model="mapEdit.desc" autocomplete="off"></el-input>
+            <el-input v-model="mapEdit.description" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -77,17 +79,27 @@
           <el-button type="primary" @click="saveNew">确 定</el-button>
         </span>
       </el-dialog>
+      <el-dialog
+              title="确认删除"
+              :visible.sync="confirmDeleteDialog"
+              width="20%" center>
+        你将删除该用户故事地图！
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="cancelDelete">取消</el-button>
+          <el-button @click="confirmDelete" type="primary">确认</el-button>
+        </span>
+      </el-dialog>
     </el-main>
   </div>
 </template>
 
 <script>
-import {post} from '../tools/http_client'
+import {get, post} from '../tools/http_client'
 
 export default {
   data() {
     const validateConfirm = (rule, value, callback) => {
-      if (this.passwordModify.password !== value) {
+      if (this.passwordModify.newPassword !== value) {
         callback('两次输入的密码不同!');
       } else {
         callback();
@@ -97,6 +109,13 @@ export default {
       activeIndex: '1',
       dialogVisible: false,
       addDialogVisible: false,
+      confirmDeleteDialog: false,
+
+      selectedMap: null,
+      selectedDeleteMap: null,
+
+      maps: [],
+
       mapEdit: {
         id: '',
         name: '',
@@ -133,26 +152,60 @@ export default {
       }
     }
   },
+  created: function() {
+    this.getMaps();
+  },
   methods: {
+    getMaps() {
+      get('map/list')
+        .then(res => {
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.maps = res.data.map_list;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          this.$message.error('网络错误!');
+        });
+    },
+    showMap(i) {
+      let map = this.maps[i];
+      this.$router.push({name: 'StoryMap', params: {map_id: map.id}});
+    },
+    showEditDialog(i) {
+      this.dialogVisible = true;
+      this.selectedMap = this.maps[i];
+      this.mapEdit.id = this.selectedMap.id;
+      this.mapEdit.name = this.selectedMap.map_name;
+      this.mapEdit.description = this.selectedMap.description;
+    },
     handleSelect(key, keyPath) {
       this.activeIndex = key;
     },
     cancelEdit() {
       this.dialogVisible = false;
+      this.selectedMap = null;
     },
     saveEdit() {
       this.$refs['mapEdit'].validate((valid) => {
         if (valid) {
-          post('map/modify', this.mapEdit)
+          post(`map/modify?map_id=${this.mapEdit.id}`, this.mapEdit)
             .then(res => {
-              console.log(res);
               if (!res.success) {
                 this.$message.error(res.message);
+                return;
               } else {
                 this.dialogVisible = false;
+                this.selectedMap = null;
+                this.$message.success('修改成功!');
+                this.getMaps();
               }
             })
             .catch(err => {
+              console.error(err);
               this.$message.error('网络错误!');
             });
         }
@@ -168,19 +221,48 @@ export default {
             .then(res => {
               if (!res.success) {
                 this.$message.error(res.message);
+                return;
               } else {
-                this.$message({
-                  message: '创建成功!',
-                  type: 'success'
-                });
+                this.$message.success('创建成功!');
                 this.addDialogVisible = false;
+                this.mapNew.name = '';
+                this.mapNew.description = '';
+                this.getMaps();
               }
             })
             .catch(err => {
+              console.error(err);
               this.$message.error('网络错误!');
             });
         }
       });
+    },
+    handleDelete(i) {
+      this.confirmDeleteDialog = true;
+      this.selectedDeleteMap = this.maps[i];
+    },
+    cancelDelete() {
+      this.confirmDeleteDialog = false;
+      this.selectedDeleteMap = null;
+    },
+    confirmDelete() {
+      get(`map/delete?map_id=${this.selectedDeleteMap.id}`)
+        .then(res => {
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.$message.success('删除成功!');
+            this.confirmDeleteDialog = false;
+            this.selectedDeleteMap = null;
+            this.getMaps();
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.$message.error('网络错误!');
+        })
+      this.confirmDeleteDialog = false;
     },
     modifyPasswd() {
       this.$refs['passwordModify'].validate((valid) => {
@@ -189,6 +271,7 @@ export default {
             .then(res => {
               if (!res.success) {
                 this.$message.error(res.message);
+                return;
               } else {
                 this.$message({
                   message: '修改成功',
@@ -197,6 +280,7 @@ export default {
               }
             })
             .catch(err => {
+              console.error(err);
               this.$message.error('网络错误!');
             });
         }
@@ -260,6 +344,10 @@ export default {
   color: #666;
   font-size: 16px;
   cursor: pointer;
+}
+
+.map i.el-icon-edit {
+  right: 45px;
 }
 
 .map:hover i {

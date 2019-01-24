@@ -59,7 +59,7 @@ public class ShiroConfig {
 
     /**
      * 注入SecurityManager
-     * */
+     */
     @Bean(name = "securityManager")
     public SecurityManager securityManager(CustomRealm customRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -77,7 +77,7 @@ public class ShiroConfig {
 
     /**
      * 添加注解支持
-     * */
+     */
     @Bean
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();

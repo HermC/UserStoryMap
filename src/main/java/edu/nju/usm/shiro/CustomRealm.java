@@ -27,7 +27,7 @@ import java.util.Set;
  * @version 1.0
  * @date 2019/01/04
  * @time 22:10
- * */
+ */
 @Component
 public class CustomRealm extends AuthorizingRealm {
 
@@ -46,7 +46,7 @@ public class CustomRealm extends AuthorizingRealm {
 
     /**
      * 当需要检测用户权限的时候调用此方法
-     * */
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("---- 权限认证方法 ----");
@@ -62,7 +62,7 @@ public class CustomRealm extends AuthorizingRealm {
         // 设置该用户具有的角色
         Set<String> roles = new HashSet<>();
         System.out.println(user.getRoles().size());
-        for (String s: user.getRoles()) {
+        for (String s : user.getRoles()) {
             roles.add(s);
         }
         info.setRoles(roles);
@@ -73,7 +73,7 @@ public class CustomRealm extends AuthorizingRealm {
 
     /**
      * 默认使用此方法进行用户名正确与否验证，错误抛出异常
-     * */
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) {
         System.out.println("---- 身份认证方法 ----");

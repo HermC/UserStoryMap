@@ -21,7 +21,7 @@ import java.util.Date;
  * @version 1.0
  * @date 2019/01/04
  * @time 20:33
- * */
+ */
 @Component
 public class JwtUtils {
 
@@ -35,9 +35,10 @@ public class JwtUtils {
 
     /**
      * 生成token
+     *
      * @param username 用户名
      * @return token字符串
-     * */
+     */
     public String createToken(String username) {
         try {
             Date date = new Date(System.currentTimeMillis() + expiration);
@@ -54,10 +55,11 @@ public class JwtUtils {
 
     /**
      * 校验token是否正确
-     * @param token token字符串
+     *
+     * @param token    token字符串
      * @param username 用户名
      * @return true token正确，false token不正确
-     * */
+     */
     public boolean verify(String token, String username) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -75,9 +77,10 @@ public class JwtUtils {
 
     /**
      * 获取token中的信息，无需secret解密也能获得
+     *
      * @param token token字符串
      * @return username用户名
-     * */
+     */
     public String getUsername(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
@@ -90,9 +93,10 @@ public class JwtUtils {
 
     /**
      * 校验时间是否超时
+     *
      * @param token token字符串
      * @return true超时，false未超时
-     * */
+     */
     public boolean verifyTimeout(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);

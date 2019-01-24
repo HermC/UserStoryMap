@@ -6,12 +6,6 @@ const cookies = require('js-cookie');
 function get(url, params = null, options = null) {
   let baseUrl = url;
   if (params) {
-    // baseUrl += '?';
-    // for (let key in params) {
-    //   baseUrl += `${key}=${param['key']}&`;
-    // }
-    // baseUrl = baseUrl.substring(0, baseUrl.length - 1)
-
     baseUrl = '?' + Object.keys(params).map((key) => {
       return `${key}=${params[key]}`
     }).join('&')
@@ -64,12 +58,14 @@ function post(url, body = {}, options = null) {
 
   return fetch(baseUrl, baseOptions)
     .then(res => {
-      console.log(res);
       return res.json();
     })
     .then(res => {
       if (res.code === 401) {
         handleUnauthorized();
+      }
+      if (res.code === 500) {
+        throw Error(res.message);
       }
       return res;
     });

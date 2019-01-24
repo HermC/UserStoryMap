@@ -1,6 +1,7 @@
 package edu.nju.usm.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.nju.usm.command.MapMetaCommand;
 import edu.nju.usm.command.UserCommand;
 import edu.nju.usm.utils.JwtUtils;
 import org.junit.Before;
@@ -67,12 +68,51 @@ public class MapControllerTest {
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("data.map_list[0].map_name").value("test"))
-                .andExpect(jsonPath("data.map_list[1].map_name").value("test2"));
+        .andExpect(jsonPath("data.map_list[1].map_name").value("test2"));
     }
+
     @Test
-    public void testToken() throws Exception {
-        System.out.println(jwtUtils.createToken("user_search_test"));//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NDc2MjczODIsInVzZXJuYW1lIjoidXNlcl9zZWFyY2hfdGVzdCJ9.Nkd88ztgioMvvUhN1L30oUmE8be0Vkxmv7ynQVBbMCM
-        //System.out.println(jwtUtils.createToken("user_search_test3"));//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NDc2MjI0NDAsInVzZXJuYW1lIjoidXNlcl9zZWFyY2hfdGVzdDMifQ.Y1bHVXWqR3Q53sqSZu5ZuCL0jXhX7cIEEjBIrsGhhMY
-        //System.out.println(jwtUtils.createToken("user_search_test2"));//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NDc2MjM3MjEsInVzZXJuYW1lIjoidXNlcl9zZWFyY2hfdGVzdDIifQ.-JGZfOFaJ9EXmi3xs_mc4nzFTbPCbGBCZXVUBSL9Ivw
+    @Transactional
+    public void testCreate() throws Exception {
+        String token = jwtUtils.createToken("user_search_test");
+        MapMetaCommand command = new MapMetaCommand();
+        command.setName("测试Map1");
+        command.setDescription("测试描述1");
+        this.mockMvc.perform(
+                post("/map/create")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(command))
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("data.map.map_name").value("测试Map1"))
+        .andExpect(jsonPath("data.map.description").value("测试描述1"));
     }
+
+    @Test
+    @Transactional
+    public void testModify() throws Exception {
+        String token = jwtUtils.createToken("user_search_test");
+        MapMetaCommand command = new MapMetaCommand();
+        command.setName("测试Map2");
+        command.setDescription("测试描述2");
+        this.mockMvc.perform(
+                post("/map/modify?map_id=1")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(command))
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("data.map.map_name").value("测试Map2"))
+        .andExpect(jsonPath("data.map.description").value("测试描述2"));
+
+        this.mockMvc.perform(
+                post("/map/modify")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(command))
+        )
+        .andExpect(status().isInternalServerError());
+    }
+
 }

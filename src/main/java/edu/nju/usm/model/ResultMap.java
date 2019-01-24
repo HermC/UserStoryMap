@@ -8,11 +8,12 @@ import java.util.Map;
 
 /**
  * 接口返回json数据的封装格式
+ *
  * @author HermC yzy627@126.com
  * @version 1.0
  * @date 2019/01/06
  * @time 22:11
- * */
+ */
 @Data
 @NoArgsConstructor
 public class ResultMap {

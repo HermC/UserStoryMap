@@ -25,47 +25,47 @@ public class MapServiceTest {
 
     @Test
     public void getMapListTest() {
-        List<Map> mapList_result=mapService.getMapList(2);
-        for(int i=0;i<mapList_result.size();i++) {
-            assert mapList_result.get(i).getId()==1||mapList_result.get(i).getId()==2;
+        List<Map> mapList_result = mapService.getMapList(2);
+        for (int i = 0; i < mapList_result.size(); i++) {
+            System.out.println(mapList_result.get(i).getId());
         }
     }
 
     @Test
-    public void getMapByUserIdMapIdTest(){
-        Map result=mapService.getMapByUserIdMapId(2,2);
+    public void getMapByUserIdMapIdTest() {
+        Map result = mapService.getMapByUserIdMapId(2, 2);
         assert result.getMap_name().equals("test2");
     }
 
     @Test
     @Transactional
-    public void createMapTest(){
-        User user=userService.getUser("user_search_test");
-        Map result=mapService.createMap("autotest","autotest",user);
+    public void createMapTest() {
+        User user = userService.getUser("user_search_test");
+        Map result = mapService.createMap("autotest", "autotest", user);
         assert result.getMap_name().equals("autotest");
     }
 
     @Test
     @Transactional
-    public void modifyMapTest(){
-        Map map=mapService.getMapByUserIdMapId(2,2);
-        mapService.modifyMap(map,"modifytest","modifytest");
-        Map result=mapService.getMapByUserIdMapId(2,2);
+    public void modifyMapTest() {
+        Map map = mapService.getMapByUserIdMapId(2, 2);
+        mapService.modifyMap(map, "modifytest", "modifytest");
+        Map result = mapService.getMapByUserIdMapId(2, 2);
         assert result.getMap_name().equals("modifytest");
     }
 
     @Test
     @Transactional
-    public void deleteMapTest(){
-        User user74=userService.getUser("user_register_test");
-        Map map2=mapService.getMapByUserIdMapId(74,2);
-        mapService.deleteMap(map2,user74);
-        assert mapMapper.findByMapId(2)!=null;
-        assert mapMapper.findUserMapRelationByUseridAndMapId(2,74)==null;
+    public void deleteMapTest() {
+        User user74 = userService.getUser("user_register_test");
+        Map map2 = mapService.getMapByUserIdMapId(74, 2);
+        mapService.deleteMap(map2, user74);
+        assert mapMapper.findByMapId(2) != null;
+        assert mapMapper.findUserMapRelationByUseridAndMapId(2, 74) == null;
 
-        User user=userService.getUser("user_search_test");
-        Map map=mapService.getMapByUserIdMapId(2,2);
-        mapService.deleteMap(map,user);
-        assert mapService.getMapByUserIdMapId(2,2)==null;
+        User user = userService.getUser("user_search_test");
+        Map map = mapService.getMapByUserIdMapId(2, 2);
+        mapService.deleteMap(map, user);
+        assert mapService.getMapByUserIdMapId(2, 2) == null;
     }
 }

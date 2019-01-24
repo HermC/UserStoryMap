@@ -10,7 +10,7 @@ import java.sql.Date;
  *
  * @author YUF
  * @date 2018/01/09
- * */
+ */
 @Data
 @NoArgsConstructor
 public class UserMapRelation {
