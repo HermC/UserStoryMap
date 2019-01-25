@@ -44,7 +44,9 @@ public class ShiroConfig {
 
         Map<String, String> ruleMap = new HashMap<>();
         // 所有请求通过我们自己的JWT Filter
-        ruleMap.put("/**", "jwt");
+        ruleMap.put("/**", "anon");
+
+
 
         // 访问 /auth/token 权限获取路径不通过JwtFilter
         ruleMap.put("/auth/token", "anon");
@@ -52,6 +54,12 @@ public class ShiroConfig {
         ruleMap.put("/user/register", "anon");
         // 访问 /unauthorized/** 不通过JwtFilter
         ruleMap.put("/unauthorized/**", "anon");
+
+        ruleMap.put("/auth/**", "jwt");
+        ruleMap.put("/user", "jwt");
+        ruleMap.put("/map/**", "jwt");
+        ruleMap.put("/story/**", "jwt");
+
         factoryBean.setFilterChainDefinitionMap(ruleMap);
 
         return factoryBean;
