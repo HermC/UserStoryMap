@@ -38,6 +38,17 @@ public interface UserMapper {
     })
     public User find(@Param("username") final String username);
 
+
+    /**
+     * 根据用户名模糊查询
+     * TODO: test
+     * @param uname 查询字符串
+     * @return 用户名中包含查询字符串的一组用户
+     */
+    @Select("SELECT * FROM user WHERE username LIKE concat('%', #{uname}, '%')")
+    public List<User> searchByName(@Param("uname") final String uname);
+
+
     /**
      * 新增用户
      */

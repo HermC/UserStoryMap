@@ -15,6 +15,8 @@ import java.util.List;
  *
  * @author YUF
  * @date 2018/01/09
+ *
+ * modified by sunx
  */
 @Repository
 @Mapper
@@ -22,8 +24,15 @@ public interface MapMapper {
     /**
      * 按user_id查询可见的所有地图
      */
-    @Select("SELECT map_id FROM user_map_relation WHERE user_id = #{user_id} and pass=true")
+    @Select("SELECT map_id FROM user_map_relation WHERE user_id = #{user_id} AND response = 1 AND end_time IS NOT NULL" +
+            " UNION " +
+            "SELECT id FROM map WHERE owner_id = #{user_id}")
     public List<Long> findByUserId(@Param("user_id") final long user_id);
+
+
+    @Select("SELECT * FROM map WHERE owner_id = #{user_id} and id = #{map_id}")
+    public Map findByUserIdMapId(@Param("user_id") final long user_id,
+                                 @Param("map_id") final long map_id);
 
     /**
      * 按map_id查询地图
@@ -53,7 +62,7 @@ public interface MapMapper {
     /**
      * 新增用户地图关系
      */
-    @Insert({"INSERT INTO user_map_relation(map_id,user_id,pass) VALUES(#{map_id}, #{user_id},#{pass})"})
+    @Insert({"INSERT INTO user_map_relation(map_id,user_id) VALUES(#{map_id}, #{user_id})"})
     @Options(useGeneratedKeys = true)
     public int insertUserMapRelation(UserMapRelation userMapRelation);
 

@@ -22,6 +22,15 @@ public class UserServiceTest {
     }
 
     @Test
+    public void searchUserTest(){
+        assert userService.searchUser("") == null;
+        assert userService.searchUser(null) == null;
+        assert userService.searchUser("sunx").size() == 2;
+        assert userService.searchUser("o~~~lala").size() == 0;
+    }
+
+
+    @Test
     @Transactional
     public void addUserTest() {
         assert userService.addUser(null) == 0;
