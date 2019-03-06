@@ -20,5 +20,6 @@ public class Constants {
 
     public static final int RESPONSE_WAIT = 0;
     public static final int RESPONSE_ACCEPT = 1;
-    public static final int RESPONSE_REJECT = -1;
+    public static final int RESPONSE_REJECT = 2;
+    public static final int RESPONSE_IGNORE = 3;
 }

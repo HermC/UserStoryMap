@@ -70,6 +70,15 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.users[0].username").value("sunx95"));
+
+        this.mockMvc.perform(
+                get("/user/search")
+                        .param("username", "sunx")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data.users[0].username").value("sunx95"))
+                .andExpect(jsonPath("data.users[1].username").value("sunx97"));
     }
 
 

@@ -115,4 +115,111 @@ public class MapControllerTest {
         .andExpect(status().isInternalServerError());
     }
 
+    @Test
+    public void testInviteCollaborator() throws Exception {
+        String token = jwtUtils.createToken("user_search_test");
+        this.mockMvc.perform(
+                get("/map/invite")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .param("map_id", "1")
+                        .param("co_user_id", "255")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testGetReceivedInvitations() throws Exception {
+        String token = jwtUtils.createToken("sunx95");
+        this.mockMvc.perform(
+                get("/map/received_invitations")
+                        .param("new_only", "1")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data.invitations[0].response").value("0"));
+
+
+        this.mockMvc.perform(
+                get("/map/received_invitations")
+                        .param("new_only", "0")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data.invitations[0].response").value("0"));
+    }
+
+
+    @Test
+    public void testGetSentInvitations() throws Exception {
+        String token = jwtUtils.createToken("user_search_test");
+        this.mockMvc.perform(
+                get("/map/sent_invitations")
+                        .param("map_id", "1")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data.invitations[0].response").value("0"));
+    }
+
+
+    @Test
+    public void testGetCollaborators() throws Exception {
+        String token = jwtUtils.createToken("user_search_test");
+        this.mockMvc.perform(
+                get("/map/collaborators")
+                        .param("map_id", "1")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testRemoveCollaborators() throws Exception {
+        String token = jwtUtils.createToken("user_search_test");
+        this.mockMvc.perform(
+                get("/map/remove_collaborator")
+                        .param("map_id", "1")
+                        .param("user_id", "255")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(
+                get("/map/invite")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .param("map_id", "1")
+                        .param("co_user_id", "255")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testResponseInvitation()throws Exception {
+        String token = jwtUtils.createToken("sunx95");
+        this.mockMvc.perform(
+                get("/map/response_invitation")
+                        .param("inv_id", "132")
+                        .param("response", "1")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        this.mockMvc.perform(
+                get("/map/remove_collaborator")
+                        .param("map_id", "1")
+                        .param("user_id", "255")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        this.mockMvc.perform(
+                get("/map/invite")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .param("map_id", "1")
+                        .param("co_user_id", "255")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+
+    }
+
+
 }

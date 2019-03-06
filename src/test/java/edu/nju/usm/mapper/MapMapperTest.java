@@ -55,14 +55,12 @@ public class MapMapperTest {
     @Test
     @Transactional
     public void findUserMapRelationByMapIddTest() {
-        List<UserMapRelation> result1=mapMapper.findUserMapRelationByMapId(11l);
+        List<UserMapRelation> result1=mapMapper.findUserMapRelationByMapId(1l);
         if(result1!=null) {
             log.info(result1.toString());
         }
-        UserMapRelation real1 = new UserMapRelation();
-        real1.setUser_id(136);
         assert result1.size()==1;
-        assert real1.getUser_id()==result1.get(0).getUser_id();
+        assert result1.get(0).getUser_id() == 255;
     }
 
     @Test

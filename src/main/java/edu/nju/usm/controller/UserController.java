@@ -53,7 +53,8 @@ public class UserController {
      * 搜索用户（用户名包含搜索字符串）
      *
      * @param username 用户输入字符串
-     * @return 若输入无效（null或长度为0，返回null；若输入正常，则返回用户List）
+     * @return  若输入无效（null或长度为0，返回null；
+     *          若输入正常，则返回用户List）。
      */
     @GetMapping(value = "/search")
     @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})

@@ -22,27 +22,36 @@ public class UserMapRelation {
     private long user_id;
     // 被邀请参与的map
     private long map_id;
-    // TODO: 待删除
-    private boolean pass;
+
     // 邀请时间
     private Date start_time;
-    // 协作关系失效时间
-    private Date end_time;
+
     // 被邀请者响应结果
     // wait=0;accept=1;reject=-1
     private int response;
 
 
     /**
-     * 协作关系是否有效
+     * 邀请是否被接受且有效
+     *
      * 满足两个条件：
      * 1. 被对方接受
      * 2. 在有效期内
-     * @return 是否有效
+     * @return 是否被接受且有效
      */
-    public boolean isAlive(){
-        boolean accepted = response == Constants.RESPONSE_ACCEPT;
-        boolean overdue = (end_time != null) && (new Date().before(end_time));
-        return accepted && (!overdue);
+    public boolean isAccepted(){
+        return response == Constants.RESPONSE_ACCEPT;
+    }
+
+
+
+    /**
+     * 是否接受响应
+     * 未过期且未响应过即可接受
+     *
+     * @return 是否接受
+     */
+    public boolean isResponsable(){
+        return response == Constants.RESPONSE_WAIT;
     }
 }

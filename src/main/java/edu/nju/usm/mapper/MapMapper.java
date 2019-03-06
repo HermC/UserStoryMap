@@ -22,9 +22,10 @@ import java.util.List;
 @Mapper
 public interface MapMapper {
     /**
+     * modified by sunx
      * 按user_id查询可见的所有地图
      */
-    @Select("SELECT map_id FROM user_map_relation WHERE user_id = #{user_id} AND response = 1 AND end_time IS NOT NULL" +
+    @Select("SELECT map_id FROM user_map_relation WHERE user_id = #{user_id} AND response = 1 " +
             " UNION " +
             "SELECT id FROM map WHERE owner_id = #{user_id}")
     public List<Long> findByUserId(@Param("user_id") final long user_id);
@@ -33,6 +34,9 @@ public interface MapMapper {
     @Select("SELECT * FROM map WHERE owner_id = #{user_id} and id = #{map_id}")
     public Map findByUserIdMapId(@Param("user_id") final long user_id,
                                  @Param("map_id") final long map_id);
+
+
+
 
     /**
      * 按map_id查询地图
@@ -79,6 +83,8 @@ public interface MapMapper {
             "</script>")
     public int update(Map map);
 
+
+
     /**
      * 删除地图
      */
@@ -96,4 +102,55 @@ public interface MapMapper {
      */
     @Delete("DELETE FROM user_map_relation WHERE map_id = #{map_id}")
     public int deleteUserMapRelation(@Param("map_id") final long map_id);
+
+    // ====== edit by sunx ======
+
+    /**
+     * 获取user收到的所有协作邀请
+     * @param userId 用户
+     * @return 邀请列表
+     */
+    @Select("SELECT * FROM user_map_relation WHERE user_id = #{user_id}")
+    public List<UserMapRelation> getAllReceivedInvitations(@Param("user_id") final long userId);
+
+    /**
+     * 获取user收到的处于特定状态的邀请
+     * @param userId 用户
+     * @return 邀请列表
+     */
+    @Select("SELECT * FROM user_map_relation WHERE user_id = #{user_id} AND response = #{response}")
+    public List<UserMapRelation> getReceivedInvitations(@Param("user_id") final long userId,
+                                                        @Param("response") final int responseStatus);
+
+    /**
+     * 获取当前地图的所有协作者（不包含owner）
+     * @param mapId 地图id
+     * @return 用户列表
+     */
+    @Select("SELECT * FROM user WHERE id IN " +
+            "(SELECT user_id FROM user_map_relation WHERE map_id = #{map_id} AND response = 1)")
+    public List<User> getCollaborators(@Param("map_id") final long mapId);
+
+    /**
+     * 更新协作关系
+     * 动态sql生成
+     */
+    @Update("<script>" +
+            "UPDATE user_map_relation SET " +
+            "response = #{response} " +
+            "WHERE id = #{id}" +
+            "</script>")
+    public int updateCollaboration(UserMapRelation relation);
+
+
+    /**
+     * 根据id查找协作邀请
+     *
+     * @param inv_id 协作邀请id
+     * @return 协作邀请
+     */
+    @Select("SELECT * FROM user_map_relation WHERE id = #{inv_id}")
+    public UserMapRelation findInvitation(@Param("inv_id") final long inv_id);
+
+
 }

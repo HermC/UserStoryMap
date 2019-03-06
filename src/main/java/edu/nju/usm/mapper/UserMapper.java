@@ -39,13 +39,16 @@ public interface UserMapper {
     public User find(@Param("username") final String username);
 
 
+    @Select("SELECT * FROM user WHERE id = #{user_id}")
+    public User findById(@Param("user_id") final long userId);
+
     /**
      * 根据用户名模糊查询
-     * TODO: test
      * @param uname 查询字符串
      * @return 用户名中包含查询字符串的一组用户
      */
-    @Select("SELECT * FROM user WHERE username LIKE concat('%', #{uname}, '%')")
+    @Select("SELECT * FROM user WHERE username LIKE concat('%', #{uname}, '%') " +
+            "ORDER BY username ASC")
     public List<User> searchByName(@Param("uname") final String uname);
 
 
