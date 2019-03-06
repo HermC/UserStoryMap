@@ -49,14 +49,18 @@ public class MapService {
      * @return 地图
      */
     public Map getMapByUserIdMapId(long user_id, long map_id) {
-        UserMapRelation userMapRelation = mapMapper.findUserMapRelationByUseridAndMapId(map_id, user_id);
 
-        if (userMapRelation != null && userMapRelation.isPass()) {
-            Map map = mapMapper.findByMapId(map_id);
-            return map;
-        } else {
-            return null;
+        // 优先返回user创建的map
+        Map map = mapMapper.findByUserIdMapId(user_id, map_id);
+
+        if(map == null){
+            UserMapRelation userMapRelation = mapMapper.findUserMapRelationByUseridAndMapId(map_id, user_id);
+            if (userMapRelation != null && userMapRelation.isAlive()) {
+                map = mapMapper.findByMapId(map_id);
+            }
         }
+
+        return map;
     }
 
     /**
@@ -75,11 +79,13 @@ public class MapService {
         map.setOwner_id(user.getId());
         map.setCreated_time(new java.sql.Date(new Date().getTime()));
         int result = mapMapper.insert(map);
-        UserMapRelation userMapRelation = new UserMapRelation();
-        userMapRelation.setUser_id(user.getId());
-        userMapRelation.setMap_id(map.getId());
-        userMapRelation.setPass(true); //TODO
-        int result2 = mapMapper.insertUserMapRelation(userMapRelation);
+
+        // comment by sunx
+//        UserMapRelation userMapRelation = new UserMapRelation();
+//        userMapRelation.setUser_id(user.getId());
+//        userMapRelation.setMap_id(map.getId());
+//        userMapRelation.setPass(true); //TODO
+//        int result2 = mapMapper.insertUserMapRelation(userMapRelation);
         return map;
     }
 
@@ -108,6 +114,10 @@ public class MapService {
      */
     @Transactional
     public void deleteMap(Map map, User user) {
+        if(map == null || user == null){
+            return;
+        }
+
         if (map.getOwner_id() == user.getId()) { // owner
             mapMapper.deleteUserMapRelation(map.getId());
             mapMapper.delete(map.getId());

@@ -18,4 +18,7 @@ public class Constants {
     public static final String ROLE_ADMIN = "admin";
     public static final String ROLE_USER = "user";
 
+    public static final int RESPONSE_WAIT = 0;
+    public static final int RESPONSE_ACCEPT = 1;
+    public static final int RESPONSE_REJECT = -1;
 }

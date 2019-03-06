@@ -56,7 +56,7 @@ public class ShiroConfig {
         ruleMap.put("/unauthorized/**", "anon");
 
         ruleMap.put("/auth/**", "jwt");
-        ruleMap.put("/user", "jwt");
+        ruleMap.put("/user/**", "jwt");
         ruleMap.put("/map/**", "jwt");
         ruleMap.put("/story/**", "jwt");
 

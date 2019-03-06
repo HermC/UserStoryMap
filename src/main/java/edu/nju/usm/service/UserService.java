@@ -41,6 +41,19 @@ public class UserService {
     }
 
     /**
+     * 根据用户名模糊查询用户
+     * @param username 输入
+     * @return 用户名中包含输入的一组用户
+     */
+    public List<User> searchUser(String username){
+        if (username == null || username.length() == 0) {
+            return null;
+        }
+        return userMapper.searchByName(username);
+
+    }
+
+    /**
      * 根据用户名判断用户是否存在
      *
      * @param username 用户名

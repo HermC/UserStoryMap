@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 用户基础信息的查询、更新、修改路由
  *
@@ -44,6 +46,31 @@ public class UserController {
                 .success()
                 .data("user", userService.getUser(username))
                 .message("获取成功!");
+    }
+
+    /**
+     *
+     * 搜索用户（用户名包含搜索字符串）
+     *
+     * @param username 用户输入字符串
+     * @return 若输入无效（null或长度为0，返回null；若输入正常，则返回用户List）
+     */
+    @GetMapping(value = "/search")
+    @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})
+    public ResultMap searchUser(@RequestParam final String username) {
+        List<User> users = userService.searchUser(username);
+        if (users == null){
+            return new ResultMap()
+                    .code(HttpStatus.OK.value())
+                    .fail()
+                    .message("无效输入！");
+        }else{
+            return new ResultMap()
+                    .code(HttpStatus.OK.value())
+                    .success()
+                    .data("users", users)
+                    .message("搜索完成！");
+        }
     }
 
     /**
