@@ -267,7 +267,7 @@ export default {
     modifyPasswd() {
       this.$refs['passwordModify'].validate((valid) => {
         if (valid) {
-          post('', this.passwordModify)
+          post('auth/password/modify', this.passwordModify)
             .then(res => {
               if (!res.success) {
                 this.$message.error(res.message);
