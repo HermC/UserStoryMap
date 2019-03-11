@@ -59,6 +59,7 @@ public class ShiroConfig {
         ruleMap.put("/user/**", "jwt");
         ruleMap.put("/map/**", "jwt");
         ruleMap.put("/story/**", "jwt");
+        ruleMap.put("/release/**", "jwt");
 
         factoryBean.setFilterChainDefinitionMap(ruleMap);
 

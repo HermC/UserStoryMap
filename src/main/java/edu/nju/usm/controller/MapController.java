@@ -122,7 +122,6 @@ public class MapController {
     }
 
 
-
     /**
      * 删除用户故事地图
      *
@@ -151,21 +150,21 @@ public class MapController {
     /**
      * 邀请协作者
      *
-     * @param mapId 协作地图id
+     * @param mapId    协作地图id
      * @param coUserId 协作者id
      * @return 邀请发送结果
      */
     @GetMapping(value = "/invite")
     @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})
     public ResultMap inviteCollaborator(@RequestParam("map_id") long mapId,
-                                        @RequestParam("co_user_id") long coUserId){
+                                        @RequestParam("co_user_id") long coUserId) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         boolean success = mapService.inviteCollaborator(username, coUserId, mapId);
-        if(success){
+        if (success) {
             return new ResultMap().code(HttpStatus.OK.value())
                     .success()
                     .message("邀请已发送！");
-        }else{
+        } else {
             return new ResultMap().code(HttpStatus.OK.value())
                     .success()
                     .message("已经发送过邀请！");
@@ -180,18 +179,18 @@ public class MapController {
      */
     @GetMapping(value = "/received_invitations")
     @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})
-    public ResultMap getReceivedInvitations(@RequestParam("new_only") int newOnly){
+    public ResultMap getReceivedInvitations(@RequestParam(value = "new_only", defaultValue = "2") int newOnly) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User user = userService.getUser(username);
         boolean onlyNew = newOnly == 1;
-        if(user != null){
+        if (user != null) {
             List<UserMapRelation> allInv = mapService.getReceivedInvitations(user.getId(), onlyNew);
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .success()
                     .data("invitations", allInv)
                     .message("获取成功！");
-        }else{
+        } else {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .fail()
@@ -208,25 +207,25 @@ public class MapController {
      */
     @GetMapping(value = "/sent_invitations")
     @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})
-    public ResultMap getSentInvitations(@RequestParam("map_id") long mapId){
+    public ResultMap getSentInvitations(@RequestParam("map_id") long mapId) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         User user = userService.getUser(username);
-        if(user != null){
+        if (user != null) {
             List<UserMapRelation> sentInvs = mapService.getSentInvitations(mapId, user.getId());
-            if(sentInvs != null){
+            if (sentInvs != null) {
                 return new ResultMap()
                         .code(HttpStatus.OK.value())
                         .success()
                         .data("invitations", sentInvs)
                         .message("获取成功！");
-            }else {
+            } else {
                 return new ResultMap()
                         .code(HttpStatus.OK.value())
                         .fail()
                         .message("非当前地图拥有者！");
             }
 
-        }else{
+        } else {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .fail()
@@ -243,16 +242,16 @@ public class MapController {
      */
     @GetMapping(value = "/collaborators")
     @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})
-    public ResultMap getCollaborators(@RequestParam("map_id") long mapId){
+    public ResultMap getCollaborators(@RequestParam("map_id") long mapId) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         List<User> cols = mapService.getCollaborators(mapId, username, false);
-        if(cols != null){
+        if (cols != null) {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .success()
                     .data("collaborators", cols)
                     .message("获取成功！");
-        }else {
+        } else {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .fail()
@@ -264,23 +263,23 @@ public class MapController {
      * 移除某个地图的某个协作者
      * 只有owner可以成功执行此操作
      *
-     * @param mapId     地图
-     * @param coUserId  协作者
+     * @param mapId    地图
+     * @param coUserId 协作者
      * @return 结果
      */
     @GetMapping(value = "/remove_collaborator")
     @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})
     public ResultMap removeCollaborator(@RequestParam("map_id") long mapId,
-                                        @RequestParam("user_id") long coUserId){
+                                        @RequestParam("user_id") long coUserId) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         boolean success = mapService.deleteInvitation(username, coUserId, mapId);
 
-        if(success){
+        if (success) {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .success()
                     .message("成功！");
-        }else{
+        } else {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .fail()
@@ -291,23 +290,23 @@ public class MapController {
     /**
      * 响应邀请
      *
-     * @param invId     user_map_relation id
-     * @param response  1(接受) 2（拒绝）3（忽略）
+     * @param invId    user_map_relation id
+     * @param response 1(接受) 2（拒绝）3（忽略）
      * @return 结果
      */
     @GetMapping(value = "/response_invitation")
     @RequiresRoles(logical = Logical.OR, value = {Constants.ROLE_ADMIN, Constants.ROLE_USER})
     public ResultMap responseInvitation(@RequestParam("inv_id") long invId,
-                                        @RequestParam("response") int response){
+                                        @RequestParam("response") int response) {
         String username = jwtUtils.getUsername((String) SecurityUtils.getSubject().getPrincipal());
         boolean success = mapService.responseInvitation(username, invId, response);
 
-        if(success){
+        if (success) {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .success()
                     .message("成功！");
-        }else {
+        } else {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .fail()

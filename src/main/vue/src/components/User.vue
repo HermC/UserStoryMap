@@ -20,7 +20,28 @@
           </div>
         </div>
         <div class="menu-content" v-else-if="activeIndex === '2'">
+          <h3>协作邀请</h3>
+          <el-table :data="invitations" style="width: 100%">
+            <el-table-column
+                    prop="map.map_name"
+                    label="地图名称">
 
+            </el-table-column>
+            <el-table-column
+                    prop="map.description"
+                    label="地图描述">
+
+            </el-table-column>
+            <el-table-column
+                    fixed="right"
+                    label="操作"
+                    width="100">
+              <template slot-scope="scope">
+                <el-button @click="acceptInvitation(scope.row)" type="text" size="small">接受</el-button>
+                <el-button @click="rejectInvitation(scope.row)" type="text" size="small">拒绝</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
         <div class="menu-content" v-else-if="activeIndex === '3'">
           <el-row>
@@ -56,6 +77,39 @@
           <el-form-item label="地图描述">
             <el-input v-model="mapEdit.description" autocomplete="off"></el-input>
           </el-form-item>
+          <div v-if="mapEdit.collaborators">
+            <h4>合作者</h4>
+            <el-row>
+              <el-autocomplete placeholder="搜索用户"
+                               v-model="selectedUserString"
+                               :fetch-suggestions="querySearchAsync"
+                               @select="handleSelectedUser"
+                               style="width: 200px"></el-autocomplete>
+              &nbsp;
+              <el-button type="primary" @click="inviteCollaborator">发送邀请</el-button>
+            </el-row>
+            <el-table
+                    :data="mapEdit.collaborators">
+              <el-table-column
+                      prop="username"
+                      label="用户名">
+
+              </el-table-column>
+              <el-table-column
+                      prop="email"
+                      label="邮箱">
+
+              </el-table-column>
+              <el-table-column
+                      fixed="right"
+                      label="操作"
+                      width="100">
+                <template slot-scope="scope">
+                  <el-button @click="deleteCollaborator(scope.row)" type="text" size="small">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancelEdit">取 消</el-button>
@@ -111,15 +165,22 @@ export default {
       addDialogVisible: false,
       confirmDeleteDialog: false,
 
+      new_only: 1,
+
       selectedMap: null,
       selectedDeleteMap: null,
 
       maps: [],
+      invitations: [],
+
+      selectedUserString: '',
+      selectedUser: null,
 
       mapEdit: {
         id: '',
         name: '',
         description: '',
+        collaborators: [],
       },
       mapNew: {
         name: '',
@@ -154,6 +215,7 @@ export default {
   },
   created: function() {
     this.getMaps();
+    this.getInvitation(this.new_only);
   },
   methods: {
     getMaps() {
@@ -164,11 +226,24 @@ export default {
             return;
           } else {
             this.maps = res.data.map_list;
+            console.log(this.maps);
           }
         })
         .catch(err => {
           console.error(err);
           this.$message.error('网络错误!');
+        });
+    },
+    getInvitation(new_only) {
+      get('map/received_invitations', { new_only: new_only })
+        .then(res => {
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.invitations = res.data.invitations;
+            console.log(this.invitations);
+          }
         });
     },
     showMap(i) {
@@ -181,6 +256,7 @@ export default {
       this.mapEdit.id = this.selectedMap.id;
       this.mapEdit.name = this.selectedMap.map_name;
       this.mapEdit.description = this.selectedMap.description;
+      this.mapEdit.collaborators = this.selectedMap.collaborators;
     },
     handleSelect(key, keyPath) {
       this.activeIndex = key;
@@ -273,10 +349,7 @@ export default {
                 this.$message.error(res.message);
                 return;
               } else {
-                this.$message({
-                  message: '修改成功',
-                  type: 'success'
-                });
+                this.$message.success('修改成功!');
               }
             })
             .catch(err => {
@@ -285,6 +358,102 @@ export default {
             });
         }
       });
+    },
+    acceptInvitation(row) {
+      console.log(row);
+      get('map/response_invitation', { inv_id: row.id, response: 1 })
+        .then(res => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.$message.success('接受成功!');
+            this.getInvitation(this.new_only);
+            this.getMaps();
+          }
+        });
+    },
+    rejectInvitation(row) {
+      console.log(row);
+      get('map/response_invitation', { inv_id: row.id, response: 2 })
+        .then(res => {
+          console.log(res);
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.$message.success('拒绝成功!');
+            this.getInvitation(this.new_only);
+          }
+        });
+    },
+    deleteCollaborator(row) {
+      console.log(row);
+      get('map/remove_collaborator', { map_id: this.mapEdit.id, user_id: row.id })
+        .then(res => {
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.$message.success('删除成功!');
+            // this.mapEdit.collaborators.remove(row);
+            let index = -1;
+            for (let i = 0; i < this.mapEdit.collaborators.length; i++) {
+              if (this.mapEdit.collaborators[i].id === row.id) {
+                index = i;
+                break;
+              }
+            }
+            if (index !== -1) {
+              this.mapEdit.collaborators.splice(index, 1);
+            }
+          }
+        });
+    },
+    querySearchAsync(queryString, cb) {
+      // var restaurants = this.restaurants;
+      // var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
+
+      // clearTimeout(this.timeout);
+      // this.timeout = setTimeout(() => {
+      //   cb(results);
+      // }, 3000 * Math.random());
+      if (!queryString) {
+        return;
+      }
+      get('user/search', { username: queryString })
+        .then(res => {
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            let users = res.data.users.map(u => {
+              return { value: u.username, id: u.id };
+            });
+            cb(users);
+          }
+        });
+    },
+    inviteCollaborator() {
+      console.log(this.selectedUser);
+      if (!this.selectedUser) {
+        return;
+      }
+      get('map/invite', { map_id: this.mapEdit.id, co_user_id:  this.selectedUser.id })
+        .then(res => {
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.$message.success('邀请成功!');
+            this.selectedUserString = '';
+            this.selectedUser = null;
+          }
+        });
+    },
+    handleSelectedUser(item) {
+      this.selectedUser = item;
     }
   }
 }

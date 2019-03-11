@@ -21,14 +21,6 @@
             <i class="el-icon-delete" @click="deleteStory(j)"></i>
             <i class="el-icon-edit" @click="handleEdit(j)"></i>
           </div>
-          <!--<div class="story story-yellow">-->
-            <!--<p>账户登录</p>-->
-            <!--<i class="el-icon-edit" @click="dialogVisible = true"></i>-->
-          <!--</div>-->
-          <!--<div class="story story-yellow">-->
-            <!--<p>修改账户信息</p>-->
-            <!--<i class="el-icon-edit" @click="dialogVisible = true"></i>-->
-          <!--</div>-->
           <div class="story-add-bottom" v-if="!i.streams || i.streams.length === 0">
             <i class="el-icon-circle-plus-outline" @click="handleNew(i.id, 'STREAM')"></i>
           </div>
@@ -38,9 +30,48 @@
         </div>
       </div>
     </div>
+    <div class="releases-wrapper" v-for="release of releases">
+      <div class="release">
+        <label @click="handleReleaseEdit(release)" style="cursor: pointer">{{ release.release_name }}</label>
+        <span style="margin-left: 20px">Deadline: {{ release.deadline }}</span>
+        <i class="el-icon-delete" style="margin-left: 10px; color: darkred"  @click="handleReleaseDelete(release)"></i>
+      </div>
+      <div class="story-cols-wrapper">
+        <div class="story-cols" v-for="i in storyMap">
+          <div class="story-col" v-if="!i.streams || i.streams.length === 0">
+            <!--<div class="story-add-bottom">-->
+
+            <!--</div>-->
+          </div>
+          <div class="story-col" v-for="j in i.streams">
+            <div class="story-add-bottom" v-if="!j.storys || j.storys.length === 0">
+              <i class="el-icon-circle-plus-outline" @click="handleNew(j.id, 'STORY')"></i>
+            </div>
+            <div class="story" style="height: 0"></div>
+            <div v-for="k in j.storys">
+              <div class="story story-white" v-if="k.release_id === release.id">
+                <div v-if="k.release_id === release.id">
+                  <p>{{ k.story_name }}</p>
+                  <el-tag size="mini" v-bind:type="getTypeColor(k.story_status)">{{ k.story_status }}</el-tag>
+                  <i class="el-icon-delete" @click="deleteStory(k)"></i>
+                  <i class="el-icon-edit" @click="handleEdit(k)"></i>
+                </div>
+              </div>
+            </div>
+            <!--<div class="story-add-bottom" v-if="j.storys && j.storys.length !== 0">-->
+              <!--<i class="el-icon-circle-plus-outline" @click="handleNew(j.storys[j.storys.length - 1].id, 'STORY')"></i>-->
+            <!--</div>-->
+          </div>
+          <div class="story-add-right">
+
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="releases-wrapper">
       <div class="release">
         UnScheduled
+        <i class="el-icon-plus" @click="handleReleaseNew" style="cursor: pointer"></i>
       </div>
       <div class="story-cols-wrapper">
         <div class="story-cols" v-for="i in storyMap">
@@ -53,38 +84,22 @@
             <div class="story-add-bottom" v-if="!j.storys || j.storys.length === 0">
               <i class="el-icon-circle-plus-outline" @click="handleNew(j.id, 'STORY')"></i>
             </div>
-            <div class="story story-white" v-for="k in j.storys">
-              <p>{{ k.story_name }}</p>
-              <el-tag size="mini" v-bind:type="getTypeColor(k.story_status)">{{ k.story_status }}</el-tag>
-              <i class="el-icon-delete" @click="deleteStory(k)"></i>
-              <i class="el-icon-edit" @click="handleEdit(k)"></i>
+            <div class="story" style="height: 0"></div>
+            <div v-for="k in j.storys">
+              <!--<div class="story" v-if="k.release_id !== -1">-->
+
+              <!--</div>-->
+              <div class="story story-white" v-if="k.release_id === -1">
+                <p>{{ k.story_name }}</p>
+                <el-tag size="mini" v-bind:type="getTypeColor(k.story_status)">{{ k.story_status }}</el-tag>
+                <i class="el-icon-delete" @click="deleteStory(k)"></i>
+                <i class="el-icon-edit" @click="handleEdit(k)"></i>
+              </div>
             </div>
             <div class="story-add-bottom" v-if="j.storys && j.storys.length !== 0">
               <i class="el-icon-circle-plus-outline" @click="handleNew(j.storys[j.storys.length - 1].id, 'STORY')"></i>
             </div>
           </div>
-          <!--<div class="story-col">-->
-            <!--<div class="story story-white">-->
-              <!--<p>输入用户名和密码登录</p>-->
-              <!--<i class="el-icon-edit" @click="dialogVisible = true"></i>-->
-            <!--</div>-->
-            <!--<div class="story-add-bottom">-->
-              <!--<i class="el-icon-circle-plus-outline"></i>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="story-col">-->
-            <!--<div class="story story-white">-->
-              <!--<p>修改密码</p>-->
-              <!--<i class="el-icon-edit" @click="dialogVisible = true"></i>-->
-            <!--</div>-->
-            <!--<div class="story story-white">-->
-              <!--<p>修改密码2</p>-->
-              <!--<i class="el-icon-edit" @click="dialogVisible = true"></i>-->
-            <!--</div>-->
-            <!--<div class="story-add-bottom">-->
-              <!--<i class="el-icon-circle-plus-outline"></i>-->
-            <!--</div>-->
-          <!--</div>-->
           <div class="story-add-right">
 
           </div>
@@ -120,10 +135,17 @@
           <el-input type="textarea" v-model="storyEdit.description" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="故事状态" prop="story_status">
-          <el-select v-model="storyEdit.story_status" placeholder="请选择">
+          <el-select v-model="storyEdit.story_status" placeholder="请选择" style="width: 100%">
             <el-option :key="'TODO'" :label="'TODO'" :value="'TODO'"></el-option>
             <el-option :key="'DOING'" :label="'DOING'" :value="'DOING'"></el-option>
             <el-option :key="'DONE'" :label="'DONE'" :value="'DONE'"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属Release" prop="release_id">
+          <el-select v-model="storyEdit.release_id" style="width: 100%">
+            <el-option :key="-1" :label="'UnScheduled'" :value="-1"></el-option>
+            <el-option v-for="release of releases"
+                       :key="release.id" :label="release.release_name" :value="release.id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -135,11 +157,67 @@
     <el-dialog
             title="确认删除"
             :visible.sync="confirmDeleteDialog"
-            width="20%" center>
+            width="20%">
       你将删除该用户故事！
       <span slot="footer" class="dialog-footer">
           <el-button @click="cancelDelete">取消</el-button>
           <el-button @click="confirmDelete" type="primary">确认</el-button>
+        </span>
+    </el-dialog>
+    <el-dialog
+            title="新增Release"
+            :visible.sync="addReleaseDialogVisible"
+            width="50%">
+      <el-form :model="releaseNew" :rules="releaseRules" ref="releaseNew">
+        <el-form-item label="Release名称" prop="release_name">
+          <el-input v-model="releaseNew.release_name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Deadline" prop="deadline">
+          <el-date-picker v-model="releaseNew.deadline"
+                          type="datetime"
+                          placeholder="选择日期和时间"
+                          default-time="12:00:00" style="width: 100%">
+
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelReleaseNew">取 消</el-button>
+        <el-button type="primary" @click="confirmReleaseNew">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+            title="修改Release"
+            :visible.sync="modifyReleaseDialogVisible"
+            width="50%">
+      <el-form :model="releaseEdit" :rules="releaseRules" ref="releaseEdit">
+        <el-form-item label="Release名称" prop="release_name">
+          <el-input v-model="releaseEdit.release_name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Deadline" prop="deadline">
+          <el-date-picker v-model="releaseEdit.deadline"
+                          type="datetime"
+                          placeholder="选择日期和时间"
+                          default-time="12:00:00" style="width: 100%">
+
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelReleaseEdit">取 消</el-button>
+        <el-button type="primary" @click="confirmReleaseEdit">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+            title="确认删除"
+            :visible.sync="confirmReleaseDeleteVisible"
+            width="20%">
+      你将删除该Release故事！
+      <br>
+      (请确保该Release下没有任何用户故事)
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="cancelReleaseDelete">取消</el-button>
+          <el-button @click="confirmReleaseDelete" type="primary">确认</el-button>
         </span>
     </el-dialog>
   </div>
@@ -155,9 +233,15 @@ export default {
       storys: null,
       storyMap: [],
 
+      releases: [],
+
       addDialogVisible: false,
       dialogVisible: false,
       confirmDeleteDialog: false,
+
+      addReleaseDialogVisible: false,
+      modifyReleaseDialogVisible: false,
+      confirmReleaseDeleteVisible: false,
 
       storyNew: {
         map_id: '',
@@ -179,9 +263,30 @@ export default {
       },
       storyDelete: null,
 
+      releaseNew: {
+        map_id: '',
+        release_name: '',
+        deadline: ''
+      },
+      releaseEdit: {
+        map_id: '',
+        release_name: '',
+        deadline: ''
+      },
+      releaseDelete: null,
+
       storyRules: {
         story_name: [
           { required: true, message: '用户故事名称不能为空!', trigger: 'blur' }
+        ]
+      },
+
+      releaseRules: {
+        release_name: [
+          { required: true, message: 'Release名称不能为空!', trigger: 'blur' }
+        ],
+        deadline: [
+          { required: true, message: 'Deadline不能为空!', trigger: 'blur' }
         ]
       }
     }
@@ -191,18 +296,18 @@ export default {
     if (!this.mapId) {
       this.$router.push('user');
     } else {
-      this.getStorys(this.mapId);
+      this.getStories(this.mapId);
     }
   },
   methods: {
-    getStorys(id) {
+    getStories(id) {
       get(`story/list?map_id=${id}`)
         .then(res => {
           if (!res.success) {
             this.$message.error(res.message);
             return;
           } else {
-            this.initStoryMap(res.data.storyList);
+            this.initStoryMap(res.data.storyList, res.data.releaseList);
           }
         })
         .catch(err => {
@@ -210,11 +315,16 @@ export default {
           this.$message.error('网络错误!');
         });
     },
-    initStoryMap(storys) {
+    initStoryMap(storys, releases) {
       if (storys === null) {
         storys = [];
       }
+      if (releases === null) {
+        releases = [];
+      }
       this.storyMap = [];
+      this.releases = releases;
+      // console.log(releases);
       // 先初始化GOAL类型的Story
       let parentId = -1;
       let index = 0;
@@ -327,7 +437,7 @@ export default {
                         this.$message.error(res.message);
                         return;
                       } else {
-                        this.getStorys(this.mapId);
+                        this.getStories(this.mapId);
                         this.addDialogVisible = false;
                       }
                     })
@@ -336,7 +446,7 @@ export default {
                       this.$message.error('网络错误!');
                     });
                 } else {
-                  this.getStorys(this.mapId);
+                  this.getStories(this.mapId);
                   this.addDialogVisible = false;
                 }
               }
@@ -377,7 +487,7 @@ export default {
             } else {
               // TODO: 同样在迭代二要考虑release相关操作
 
-              this.getStorys(this.mapId);
+              this.getStories(this.mapId);
               this.dialogVisible = false;
             }
           })
@@ -406,7 +516,7 @@ export default {
             return;
           } else {
             this.confirmDeleteDialog = false;
-            this.getStorys(this.mapId);
+            this.getStories(this.mapId);
           }
         })
         .catch(err => {
@@ -425,6 +535,82 @@ export default {
         default:
           return "info";
       }
+    },
+    handleReleaseNew() {
+      this.releaseNew.map_id = this.mapId;
+      this.releaseNew.release_name = '';
+      this.releaseNew.deadline = '';
+      this.addReleaseDialogVisible = true;
+    },
+    confirmReleaseNew() {
+      this.$refs['releaseNew'].validate((valid) => {
+        if (valid) {
+          // console.log(this.releaseNew);
+          post('release/create', this.releaseNew)
+            .then(res => {
+              if (!res.success) {
+                this.$message.error(res.message);
+                return;
+              } else {
+                this.$message.success('添加成功!');
+                this.addReleaseDialogVisible = false;
+                this.getStories(this.mapId);
+              }
+            });
+        }
+      });
+      console.log(this.releaseNew);
+    },
+    handleReleaseEdit(release) {
+      this.releaseEdit.map_id = this.mapId;
+      this.releaseEdit.release_name = release.release_name;
+      this.releaseEdit.deadline = release.deadline;
+      this.modifyReleaseDialogVisible = true;
+    },
+    cancelReleaseNew() {
+      this.addReleaseDialogVisible = true;
+    },
+    confirmReleaseEdit() {
+      this.$refs['releaseEdit'].validate((valid) => {
+        if (valid) {
+          post('release/modify', this.releaseEdit)
+            .then(res => {
+              if (!res.success) {
+                this.$message.error(res.message);
+                return;
+              } else {
+                this.$message.success('修改成功!');
+                this.modifyReleaseDialogVisible = false;
+                this.getStories(this.mapId);
+              }
+            });
+        }
+      });
+      console.log(this.releaseEdit);
+    },
+    cancelReleaseEdit() {
+      this.modifyReleaseDialogVisible = false;
+    },
+    handleReleaseDelete(release) {
+      this.confirmReleaseDeleteVisible = true;
+      this.releaseDelete = release;
+      console.log(release);
+    },
+    confirmReleaseDelete() {
+      get('release/delete', { release_id: this.releaseDelete.id })
+        .then(res => {
+          if (!res.success) {
+            this.$message.error(res.message);
+            return;
+          } else {
+            this.$message.success('删除成功!');
+            this.confirmReleaseDeleteVisible = false;
+            this.getStories(this.mapId);
+          }
+        })
+    },
+    cancelReleaseDelete() {
+      this.confirmReleaseDeleteVisible = false;
     }
   }
   }
@@ -460,12 +646,12 @@ export default {
 .releases-wrapper .release {
   left: 0;
   width: 100%;
-  position: fixed;
+  position: relative;
   border-bottom: 1px dashed lightgrey;
 }
 
 .story-cols-wrapper {
-  margin-top: 32px;
+  margin-top: 10px;
 }
 
 .story-cols {
@@ -603,5 +789,12 @@ export default {
 
 .block {
   display: block;
+}
+.release .el-icon-delete {
+  display: none;
+}
+.release:hover .el-icon-delete {
+  display: inline-block;
+  cursor: pointer;
 }
 </style>

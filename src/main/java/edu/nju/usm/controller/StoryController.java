@@ -1,11 +1,9 @@
 package edu.nju.usm.controller;
 
 import edu.nju.usm.command.StoryCommand;
-import edu.nju.usm.model.Map;
-import edu.nju.usm.model.ResultMap;
-import edu.nju.usm.model.Story;
-import edu.nju.usm.model.User;
+import edu.nju.usm.model.*;
 import edu.nju.usm.service.MapService;
+import edu.nju.usm.service.ReleaseService;
 import edu.nju.usm.service.StoryService;
 import edu.nju.usm.service.UserService;
 import edu.nju.usm.utils.Constants;
@@ -38,6 +36,8 @@ public class StoryController {
     private MapService mapService;
     @Autowired
     private StoryService storyService;
+    @Autowired
+    private ReleaseService releaseService;
 
     /**
      * 获取用户故事详情
@@ -102,10 +102,12 @@ public class StoryController {
                         .message("没有查看权限");
             }
             List<Story> storyList = storyService.getStoryList(map_id);
+            List<Release> releaseList  =releaseService.getReleaseList(map_id);
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .success()
                     .data("storyList", storyList)
+                    .data("releaseList", releaseList)
                     .message("获取成功!");
         }
     }
@@ -272,7 +274,7 @@ public class StoryController {
             return new ResultMap()
                     .code(HttpStatus.OK.value())
                     .fail()
-                    .message("没有删除权限");
+                    .message("没有删除权限!");
         }
         storyService.deleteStory(story.getId());
         return new ResultMap().code(HttpStatus.OK.value())

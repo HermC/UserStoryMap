@@ -20,8 +20,11 @@ public class UserMapRelation {
     private long id;
     // 被邀请者
     private long user_id;
+
     // 被邀请参与的map
     private long map_id;
+
+    private Map map;
 
     // 邀请时间
     private Date start_time;

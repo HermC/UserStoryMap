@@ -6,7 +6,7 @@ const cookies = require('js-cookie');
 function get(url, params = null, options = null) {
   let baseUrl = url;
   if (params) {
-    baseUrl = '?' + Object.keys(params).map((key) => {
+    baseUrl = baseUrl + '?' + Object.keys(params).map((key) => {
       return `${key}=${params[key]}`
     }).join('&')
   }

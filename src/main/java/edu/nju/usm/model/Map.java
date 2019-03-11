@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  * 地图模型
@@ -20,5 +21,7 @@ public class Map {
     private String description;
     private long owner_id;
     private Date created_time;
+
+    private List<User> collaborators;
 
 }
