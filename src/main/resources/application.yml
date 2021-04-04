@@ -1,0 +1,29 @@
+server:
+  servlet:
+    context-path: /
+    session:
+      timeout: 30m
+  port: 8082
+spring:
+  datasource:
+    url: jdbc:mysql://139.196.92.241:3306/usm?useUnicode=true&characterEncoding=utf8&autoReconnect=true
+    username: root
+    password: mf1832225
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    hikari:
+      connection-test-query: SELECT 1
+      validation-timeout: 6000
+      max-lifetime: 300000
+  mvc:
+    static-path-pattern: /**
+logging:
+  file: logs/usm.log
+  level:
+    root: info
+    edu.nju.usm.mapper: DEBUG
+
+jwt:
+  expiration: 86400000
+  secret: SHIRO_JWT
+  tokenHead: "Bearer "
